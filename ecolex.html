@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>EcoLex — Aprenda cultivando</title>
+<meta name="description" content="Jogo bilíngue PT/EN onde cada palavra acertada planta uma árvore. Zen, silencioso, sem login." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&display=swap" rel="stylesheet" />
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   EcoLex · Design tokens
+   Paleta: verde musgo, marrom terra, amarelo suave, terracota
+   Art. III — estética zen, sem neons
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* Cores — paleta restrita */
+  --moss-900: #2b3a2a;
+  --moss-700: #47593f;
+  --moss-500: #6b7e55;
+  --moss-300: #a8b891;
+  --moss-100: #e2e7d6;
+
+  --earth-900: #3d2a1e;
+  --earth-700: #6b4a34;
+  --earth-500: #a07552;
+  --earth-300: #c9a783;
+
+  --sun-500:   #e8c468;
+  --sun-300:   #f1dba1;
+  --sun-100:   #faf1d7;
+
+  --terra-700: #a64a2b;
+  --terra-500: #c96e4c;
+  --terra-300: #e2a07e;
+
+  --paper:     #f6f2e6;
+  --paper-2:   #efe9d7;
+  --ink:       #2a2520;
+  --ink-soft:  #5a4f45;
+
+  /* Semantic */
+  --bg:        var(--paper);
+  --bg-raised: #fbf8ef;
+  --fg:        var(--ink);
+  --fg-soft:   var(--ink-soft);
+  --accent:    var(--moss-700);
+  --danger:    var(--terra-700);
+
+  /* Typography */
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body:    'Quicksand', system-ui, sans-serif;
+
+  /* Motion */
+  --dur-fast:  180ms;
+  --dur-med:   400ms;
+  --dur-slow:  700ms;
+  --ease:      cubic-bezier(.22, .61, .36, 1);
+
+  /* Radii / spacing */
+  --r-sm: 8px;
+  --r-md: 16px;
+  --r-lg: 28px;
+  --r-xl: 42px;
+
+  /* Shadows — suaves, orgânicas */
+  --shadow-soft: 0 2px 12px rgba(61, 42, 30, .06), 0 12px 40px rgba(61, 42, 30, .04);
+  --shadow-deep: 0 4px 18px rgba(61, 42, 30, .10), 0 24px 60px rgba(61, 42, 30, .08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-med:  0ms;
+    --dur-slow: 0ms;
+  }
+  *, *::before, *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+}
+
+/* ───────── Reset enxuto ───────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--fg);
+  background: var(--bg);
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid var(--moss-700);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+/* ───────── Papel texturizado: ruído orgânico de fundo ───────── */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, rgba(168, 184, 145, .25), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(232, 196, 104, .18), transparent 55%),
+    radial-gradient(800px 800px at 50% 120%, rgba(160, 117, 82, .14), transparent 60%);
+}
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.3   0 0 0 0 0.25   0 0 0 0 0.2   0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* ───────── App shell ───────── */
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh; min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 14px 18px 120px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 720px) {
+  .shell { max-width: 520px; padding-top: 28px; }
+}
+
+/* ───────── Topbar ───────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 4px 18px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--moss-900);
+}
+.brand svg { flex-shrink: 0; }
+.brand-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--moss-500);
+  box-shadow: 0 0 0 4px rgba(107, 126, 85, .18);
+  animation: pulse 3s var(--ease) infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(107, 126, 85, .18); }
+  50%      { box-shadow: 0 0 0 7px rgba(107, 126, 85, .05); }
+}
+.top-actions { display: flex; gap: 6px; }
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--moss-700);
+  transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.icon-btn:hover { background: rgba(71, 89, 63, .08); }
+.icon-btn:active { transform: scale(0.94); }
+.icon-btn[aria-pressed="true"] { background: var(--moss-100); }
+
+/* ───────── Cards ───────── */
+.card {
+  background: var(--bg-raised);
+  border-radius: var(--r-xl);
+  padding: 24px 22px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(107, 126, 85, .1);
+}
+.card + .card { margin-top: 14px; }
+
+/* ───────── Headings ───────── */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--moss-700);
+  opacity: .75;
+}
+h1, h2, h3 { margin: 0; }
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(30px, 9vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--moss-900);
+}
+h1 em { font-style: italic; color: var(--earth-700); font-weight: 400; }
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  color: var(--moss-900);
+}
+p { margin: 0; color: var(--fg-soft); line-height: 1.55; }
+
+/* ───────── Buttons ───────── */
+.btn {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 26px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  user-select: none;
+}
+.btn-primary {
+  background: var(--moss-700);
+  color: var(--sun-100);
+  box-shadow: 0 2px 0 var(--moss-900), 0 8px 20px rgba(43, 58, 42, .18);
+}
+.btn-primary:hover { background: var(--moss-900); }
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 0 0 var(--moss-900); }
+.btn-ghost {
+  background: transparent;
+  color: var(--moss-900);
+  border: 1.5px solid var(--moss-300);
+}
+.btn-ghost:hover { background: var(--moss-100); }
+.btn-danger {
+  background: transparent;
+  color: var(--terra-700);
+  border: 1.5px solid rgba(166, 74, 43, .3);
+}
+.btn-danger:hover { background: rgba(166, 74, 43, .08); }
+.btn-full { width: 100%; }
+
+/* ───────── Chip / seletor ───────── */
+.chips {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.chip {
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  background: transparent;
+  border: 1.5px solid rgba(107, 126, 85, .25);
+  color: var(--moss-900);
+  transition: all var(--dur-fast) var(--ease);
+}
+.chip:hover { background: var(--moss-100); }
+.chip[aria-pressed="true"] {
+  background: var(--moss-700);
+  color: var(--sun-100);
+  border-color: var(--moss-700);
+}
+
+/* ───────── Lang toggle — hero ───────── */
+.lang-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(107, 126, 85, .12);
+}
+.lang-row {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--moss-900);
+}
+.lang-flag {
+  display: grid; place-items: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--moss-100);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--moss-900);
+}
+.lang-flag.hint { background: var(--sun-100); color: var(--earth-700); }
+.swap-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--sun-100);
+  color: var(--earth-700);
+  transition: transform var(--dur-med) var(--ease), background var(--dur-fast) var(--ease);
+}
+.swap-btn:hover { background: var(--sun-300); }
+.swap-btn:active { transform: rotate(180deg); }
+
+/* ───────── Tree stage ───────── */
+.stage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-height: 44vh;
+  margin: 6px 0 10px;
+  display: grid; place-items: center;
+}
+.stage svg { width: 100%; height: 100%; overflow: visible; }
+
+/* Tree layers: crossfade controlado por data-stage no container */
+.tree-layer {
+  transition: opacity var(--dur-med) var(--ease);
+}
+.ground-shadow {
+  position: absolute;
+  bottom: 6%; left: 15%; right: 15%;
+  height: 12px;
+  background: radial-gradient(ellipse at center, rgba(43, 58, 42, .18), transparent 65%);
+  border-radius: 50%;
+  filter: blur(4px);
+}
+
+/* Floating particles — sutis */
+.petal {
+  position: absolute;
+  width: 9px; height: 9px;
+  border-radius: 50% 10% 50% 10%;
+  pointer-events: none;
+  animation: petal-fall 3.4s var(--ease) forwards;
+  opacity: 0;
+}
+@keyframes petal-fall {
+  0%   { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--dx, 20px), 180px) rotate(320deg); }
+}
+
+/* ───────── Hint bar ───────── */
+.hint-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(250, 241, 215, .6) 0%, rgba(250, 241, 215, .3) 100%);
+  border-left: 3px solid var(--sun-500);
+  padding: 14px 16px;
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  margin-bottom: 14px;
+}
+.hint-tag {
+  font-size: 10.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--earth-700);
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.hint-text { flex: 1; color: var(--earth-900); font-size: 15px; line-height: 1.45; }
+
+.extra-hint {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(232, 196, 104, .2);
+  border-radius: var(--r-sm);
+  font-size: 13.5px;
+  color: var(--earth-900);
+  animation: slide-in var(--dur-med) var(--ease);
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ───────── Word slots ───────── */
+.word-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin: 8px 0 20px;
+  min-height: 52px;
+}
+.slot {
+  width: 30px; height: 44px;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 26px;
+  color: var(--moss-900);
+  border-bottom: 2.5px solid var(--earth-500);
+  transition: color var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+}
+.slot.revealed { animation: slot-pop 400ms var(--ease); border-bottom-color: var(--moss-500); }
+.slot.space { width: 12px; border: 0; }
+@keyframes slot-pop {
+  0%   { transform: translateY(8px); opacity: 0; }
+  60%  { transform: translateY(-2px); opacity: 1; }
+  100% { transform: translateY(0); }
+}
+
+/* ───────── Power-up island ───────── */
+.powerup-island {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--bg-raised);
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(107, 126, 85, .15);
+  margin-bottom: 14px;
+}
+.powerup-btn {
+  flex-shrink: 0;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--sun-100);
+  color: var(--earth-700);
+  font-size: 26px;
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  box-shadow: inset 0 -3px 0 rgba(160, 117, 82, .2), 0 4px 12px rgba(160, 117, 82, .15);
+}
+.powerup-btn:hover:not(:disabled) { transform: translateY(-2px); background: var(--sun-300); }
+.powerup-btn:active:not(:disabled) { transform: translateY(0); }
+.powerup-btn.rain   { background: #d3e4ea; color: #2f5d6e; }
+.powerup-btn.rain:hover:not(:disabled) { background: #b8d4dd; }
+.powerup-btn.sun    { background: var(--sun-300); color: var(--terra-700); }
+.powerup-btn.sun:hover:not(:disabled) { background: var(--sun-500); }
+.powerup-btn.compost { background: #d8dcc4; color: var(--moss-900); }
+.powerup-btn.compost:hover:not(:disabled) { background: var(--moss-100); }
+.powerup-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  box-shadow: none;
+}
+.powerup-btn.active-indicator {
+  box-shadow: 0 0 0 3px rgba(232, 196, 104, .55), inset 0 -3px 0 rgba(160, 117, 82, .2);
+  animation: glow 2s var(--ease) infinite;
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(232, 196, 104, .55), inset 0 -3px 0 rgba(160, 117, 82, .2); }
+  50%      { box-shadow: 0 0 0 6px rgba(232, 196, 104, .2), inset 0 -3px 0 rgba(160, 117, 82, .2); }
+}
+.powerup-meta { flex: 1; min-width: 0; }
+.powerup-name { font-weight: 600; color: var(--moss-900); font-size: 14px; }
+.powerup-desc { font-size: 12px; color: var(--fg-soft); }
+
+/* Shield indicator */
+.shield-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px;
+  font-size: 11px; font-weight: 600;
+  background: var(--sun-300);
+  color: var(--earth-700);
+  border-radius: 999px;
+  margin-left: auto;
+}
+
+/* ───────── Keyboard ───────── */
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding: 4px 0;
+}
+.key {
+  aspect-ratio: 1 / 1.15;
+  min-height: 44px;
+  border-radius: 10px;
+  background: var(--bg-raised);
+  border: 1px solid rgba(107, 126, 85, .15);
+  color: var(--moss-900);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 18px;
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.key:hover:not(:disabled) { background: var(--moss-100); transform: translateY(-1px); }
+.key:active:not(:disabled) { transform: translateY(1px); }
+.key.hit {
+  background: var(--moss-700);
+  color: var(--sun-100);
+  border-color: var(--moss-700);
+}
+.key.miss {
+  background: rgba(201, 110, 76, .14);
+  color: var(--terra-700);
+  border-color: rgba(201, 110, 76, .3);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+.key:disabled { cursor: not-allowed; opacity: .75; }
+
+/* ───────── Lives bar (textual / accessibility) ───────── */
+.lives {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--fg-soft);
+}
+.heart {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--moss-500);
+  transition: background var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+}
+.heart.lost { background: rgba(61, 42, 30, .15); transform: scale(.75); }
+
+/* ───────── End screen ───────── */
+.end-hero {
+  text-align: center;
+  padding: 10px 0 18px;
+}
+.end-title {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.end-title.win  { color: var(--moss-900); }
+.end-title.loss { color: var(--terra-700); font-style: italic; }
+.end-word {
+  display: inline-flex; flex-direction: column;
+  gap: 6px;
+  margin: 18px 0;
+}
+.word-primary {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--moss-900);
+  letter-spacing: 0.02em;
+}
+.word-secondary {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--earth-700);
+}
+.pronounce-row {
+  display: flex; gap: 10px; justify-content: center; margin: 14px 0 24px;
+  flex-wrap: wrap;
+}
+.pronounce-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--bg-raised);
+  border: 1.5px solid rgba(107, 126, 85, .25);
+  color: var(--moss-900);
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: all var(--dur-fast) var(--ease);
+}
+.pronounce-btn:hover { background: var(--moss-100); }
+.pronounce-btn .flag-mini {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+  padding: 3px 7px;
+  background: var(--moss-700); color: var(--sun-100);
+  border-radius: 999px;
+}
+
+/* ───────── Forest (streak view) ───────── */
+.forest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 10px;
+  padding: 18px 8px 6px;
+  min-height: 180px;
+  align-items: end;
+}
+.forest-slot {
+  aspect-ratio: 1;
+  display: grid; place-items: end center;
+  animation: grow var(--dur-slow) var(--ease);
+}
+@keyframes grow {
+  from { transform: translateY(10px) scale(.7); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.forest-empty-state {
+  text-align: center;
+  font-style: italic;
+  color: var(--fg-soft);
+  padding: 32px 12px;
+  font-family: var(--font-display);
+}
+.streak-hero {
+  display: flex; align-items: baseline; gap: 14px;
+  flex-wrap: wrap;
+}
+.streak-big {
+  font-family: var(--font-display);
+  font-size: 56px; font-weight: 400;
+  color: var(--moss-900);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.streak-label {
+  font-family: var(--font-display); font-style: italic;
+  color: var(--earth-700);
+  font-size: 18px;
+}
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+.stat-cell {
+  text-align: center;
+  padding: 14px 6px;
+  background: var(--paper-2);
+  border-radius: var(--r-md);
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 500;
+  color: var(--moss-900);
+}
+.stat-lbl { font-size: 11px; color: var(--fg-soft); letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ───────── Glossary ───────── */
+.gloss-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.gloss-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px dashed rgba(107, 126, 85, .18);
+}
+.gloss-item:last-child { border-bottom: 0; }
+.gloss-word {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 17px;
+  color: var(--moss-900);
+  letter-spacing: 0.01em;
+}
+.gloss-trans {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--earth-700);
+}
+.gloss-meta { flex: 1; min-width: 0; }
+.gloss-result {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+.gloss-result.win  { background: var(--moss-100); color: var(--moss-900); }
+.gloss-result.loss { background: rgba(201, 110, 76, .14); color: var(--terra-700); }
+
+/* ───────── Tab nav ───────── */
+.tabs {
+  position: sticky;
+  bottom: 12px;
+  margin-top: auto;
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  background: rgba(251, 248, 239, .92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 999px;
+  border: 1px solid rgba(107, 126, 85, .15);
+  box-shadow: var(--shadow-soft);
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 13px; font-weight: 600;
+  color: var(--fg-soft);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.tab[aria-current="page"] {
+  background: var(--moss-700);
+  color: var(--sun-100);
+}
+
+/* ───────── Toast ───────── */
+.toast {
+  position: fixed;
+  left: 50%; bottom: 90px;
+  transform: translateX(-50%);
+  background: var(--moss-900);
+  color: var(--sun-100);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-deep);
+  animation: toast-in var(--dur-med) var(--ease);
+  z-index: 50;
+  max-width: 88vw;
+  text-align: center;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* SR-only */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ───────── Onboarding ───────── */
+.onboarding {
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+  padding: 8vh 0 4vh;
+}
+.onboarding h1 {
+  font-size: clamp(44px, 12vw, 64px);
+  margin-bottom: 8px;
+}
+.onboarding .tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--earth-700);
+  margin-bottom: 32px;
+  max-width: 28ch;
+}
+.onboarding-tree {
+  width: 70%; max-width: 260px;
+  aspect-ratio: 1;
+  margin-bottom: 24px;
+}
+
+/* Divider ornamental */
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--moss-500);
+  margin: 22px 0;
+}
+.divider::before, .divider::after {
+  content: ""; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(107, 126, 85, .25), transparent);
+}
+.divider svg { flex-shrink: 0; }
+
+/* ───────── Anim on round start ───────── */
+.stage-enter {
+  animation: stage-enter var(--dur-slow) var(--ease);
+}
+@keyframes stage-enter {
+  from { opacity: 0; transform: scale(.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+</style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "react":     "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client"
+  }
+}
+</script>
+
+<script type="module">
+import React, { useReducer, useEffect, useMemo, useRef, useState, useCallback, createContext, useContext } from 'react';
+import { createRoot } from 'react-dom/client';
+
+const h = React.createElement;
+
+/* ═══════════════════════════════════════════════════════════════
+   § 04 — Word bank  (bilíngue · mínimo de 30 palavras como P0)
+   ═══════════════════════════════════════════════════════════════ */
+const WORDS = [
+  // nature
+  { id:  1, category:"nature", difficulty:1, languages:{ pt:{word:"FLORESTA", hint:"Grande ecossistema com muitas árvores.", extraHint:"Pode ser tropical, boreal ou temperada."}, en:{word:"FOREST", hint:"A large area covered chiefly with trees.", extraHint:"Can be tropical, boreal, or temperate."}}},
+  { id:  2, category:"nature", difficulty:1, languages:{ pt:{word:"RIO", hint:"Corrente natural de água que flui para o mar.", extraHint:"O Amazonas é o maior em volume."}, en:{word:"RIVER", hint:"Flowing body of water going to the sea.", extraHint:"The Nile is the longest of all."}}},
+  { id:  3, category:"nature", difficulty:2, languages:{ pt:{word:"MONTANHA", hint:"Elevação natural muito alta do terreno.", extraHint:"Cadeias se formam em placas tectônicas."}, en:{word:"MOUNTAIN", hint:"A large natural elevation of land.", extraHint:"Ranges form along tectonic boundaries."}}},
+  { id:  4, category:"nature", difficulty:2, languages:{ pt:{word:"OCEANO", hint:"Vasto corpo de água salgada que cobre boa parte do planeta.", extraHint:"Existem cinco reconhecidos pela ONU."}, en:{word:"OCEAN", hint:"A vast body of salt water covering the planet.", extraHint:"Five are recognized by the UN."}}},
+  { id:  5, category:"nature", difficulty:1, languages:{ pt:{word:"ARVORE", hint:"Planta lenhosa alta, com tronco e galhos.", extraHint:"Algumas vivem mais de mil anos."}, en:{word:"TREE", hint:"A tall plant with trunk and branches.", extraHint:"Some species live over a thousand years."}}},
+  { id:  6, category:"nature", difficulty:2, languages:{ pt:{word:"NUVEM", hint:"Massa visível de vapor flutuando no céu.", extraHint:"Cirros são as mais altas."}, en:{word:"CLOUD", hint:"Visible mass of vapor floating in the sky.", extraHint:"Cirrus are the highest type."}}},
+  { id:  7, category:"nature", difficulty:2, languages:{ pt:{word:"SEMENTE", hint:"Pequena parte da planta que gera uma nova.", extraHint:"Podem ficar dormentes por décadas."}, en:{word:"SEED", hint:"Small part of a plant that grows a new one.", extraHint:"Can stay dormant for decades."}}},
+  { id:  8, category:"nature", difficulty:2, languages:{ pt:{word:"ORVALHO", hint:"Gotas de água formadas na madrugada sobre plantas.", extraHint:"Resulta da condensação."}, en:{word:"DEW", hint:"Water droplets formed at dawn on plants.", extraHint:"Results from condensation."}}},
+  { id:  9, category:"nature", difficulty:3, languages:{ pt:{word:"RAIZ", hint:"Parte da planta que absorve água e nutrientes.", extraHint:"Também sustenta a estrutura vegetal."}, en:{word:"ROOT", hint:"Plant part that absorbs water and nutrients.", extraHint:"It also anchors the plant in place."}}},
+  { id: 10, category:"nature", difficulty:3, languages:{ pt:{word:"MUSGO", hint:"Planta pequena e macia que cresce em locais úmidos.", extraHint:"Não tem vasos condutores."}, en:{word:"MOSS", hint:"Small soft plant growing in damp places.", extraHint:"It has no vascular system."}}},
+  { id: 11, category:"nature", difficulty:3, languages:{ pt:{word:"NEBLINA", hint:"Nuvem baixa que reduz a visibilidade.", extraHint:"Comum em vales pela manhã."}, en:{word:"MIST", hint:"Low cloud that reduces visibility.", extraHint:"Common in valleys at dawn."}}},
+  { id: 12, category:"nature", difficulty:2, languages:{ pt:{word:"PEDRA", hint:"Fragmento sólido de mineral.", extraHint:"Pode ser moldada pelo vento e pela água."}, en:{word:"STONE", hint:"Solid fragment of mineral matter.", extraHint:"Shaped by wind and water over time."}}},
+
+  // elements
+  { id: 20, category:"elements", difficulty:1, languages:{ pt:{word:"FOGO", hint:"Um dos quatro elementos clássicos; queima.", extraHint:"Exige calor, combustível e oxigênio."}, en:{word:"FIRE", hint:"One of the four classical elements; burns.", extraHint:"Needs heat, fuel, and oxygen."}}},
+  { id: 21, category:"elements", difficulty:1, languages:{ pt:{word:"AGUA", hint:"Líquido essencial para a vida.", extraHint:"Formada por hidrogênio e oxigênio."}, en:{word:"WATER", hint:"Liquid essential for life.", extraHint:"Made of hydrogen and oxygen."}}},
+  { id: 22, category:"elements", difficulty:1, languages:{ pt:{word:"TERRA", hint:"Solo sob nossos pés; planeta azul.", extraHint:"Terceiro do Sistema Solar."}, en:{word:"EARTH", hint:"Ground beneath us; the blue planet.", extraHint:"Third planet from the Sun."}}},
+  { id: 23, category:"elements", difficulty:1, languages:{ pt:{word:"VENTO", hint:"Ar em movimento na atmosfera.", extraHint:"Causado por diferenças de pressão."}, en:{word:"WIND", hint:"Air moving through the atmosphere.", extraHint:"Caused by pressure differences."}}},
+  { id: 24, category:"elements", difficulty:2, languages:{ pt:{word:"FAISCA", hint:"Pequena partícula incandescente.", extraHint:"Dá início a incêndios."}, en:{word:"SPARK", hint:"Tiny glowing particle of fire.", extraHint:"Often starts a bigger flame."}}},
+  { id: 25, category:"elements", difficulty:2, languages:{ pt:{word:"CINZA", hint:"Resíduo cinza deixado após queima.", extraHint:"Pode adubar o solo."}, en:{word:"ASH", hint:"Gray residue left after burning.", extraHint:"Can fertilize soil."}}},
+  { id: 26, category:"elements", difficulty:3, languages:{ pt:{word:"BRASA", hint:"Pedaço incandescente de carvão ou madeira.", extraHint:"Ainda emite calor após a chama apagar."}, en:{word:"EMBER", hint:"Glowing piece of coal or wood.", extraHint:"Still radiates heat after flames die."}}},
+
+  // fauna
+  { id: 40, category:"fauna", difficulty:1, languages:{ pt:{word:"PASSARO", hint:"Animal vertebrado com penas e asas.", extraHint:"Nem todos voam — pinguins, por exemplo."}, en:{word:"BIRD", hint:"Feathered vertebrate with wings.", extraHint:"Not all fly — penguins, for example."}}},
+  { id: 41, category:"fauna", difficulty:1, languages:{ pt:{word:"ABELHA", hint:"Inseto social que produz mel.", extraHint:"Essencial para polinização."}, en:{word:"BEE", hint:"Social insect producing honey.", extraHint:"Essential for pollination."}}},
+  { id: 42, category:"fauna", difficulty:2, languages:{ pt:{word:"RAPOSA", hint:"Mamífero astuto de cauda espessa.", extraHint:"Presente no folclore de várias culturas."}, en:{word:"FOX", hint:"Sly mammal with a bushy tail.", extraHint:"Features in folklore worldwide."}}},
+  { id: 43, category:"fauna", difficulty:2, languages:{ pt:{word:"CORUJA", hint:"Ave noturna com grandes olhos.", extraHint:"Símbolo de sabedoria em muitas culturas."}, en:{word:"OWL", hint:"Nocturnal bird with large eyes.", extraHint:"Symbol of wisdom in many cultures."}}},
+  { id: 44, category:"fauna", difficulty:2, languages:{ pt:{word:"CERVO", hint:"Mamífero esbelto com chifres ramificados.", extraHint:"Os machos trocam os chifres anualmente."}, en:{word:"DEER", hint:"Slender mammal with branched antlers.", extraHint:"Males shed antlers each year."}}},
+  { id: 45, category:"fauna", difficulty:3, languages:{ pt:{word:"BORBOLETA", hint:"Inseto colorido que nasce de casulo.", extraHint:"Passa por metamorfose completa."}, en:{word:"BUTTERFLY", hint:"Colorful insect born from a cocoon.", extraHint:"Undergoes complete metamorphosis."}}},
+  { id: 46, category:"fauna", difficulty:3, languages:{ pt:{word:"ESQUILO", hint:"Pequeno mamífero arborícola de cauda fofa.", extraHint:"Estoca sementes para o inverno."}, en:{word:"SQUIRREL", hint:"Small tree-dwelling mammal with bushy tail.", extraHint:"Stashes seeds for winter."}}},
+  { id: 47, category:"fauna", difficulty:2, languages:{ pt:{word:"SAPO", hint:"Anfíbio que vive entre a água e a terra.", extraHint:"Respira também pela pele."}, en:{word:"FROG", hint:"Amphibian living between water and land.", extraHint:"Breathes also through its skin."}}},
+
+  // seasons
+  { id: 60, category:"seasons", difficulty:1, languages:{ pt:{word:"INVERNO", hint:"Estação mais fria do ano.", extraHint:"Dias curtos, noites longas."}, en:{word:"WINTER", hint:"The coldest season of the year.", extraHint:"Short days, long nights."}}},
+  { id: 61, category:"seasons", difficulty:1, languages:{ pt:{word:"VERAO", hint:"Estação mais quente.", extraHint:"Dias longos e intensidade solar alta."}, en:{word:"SUMMER", hint:"The warmest season.", extraHint:"Long days and high sunlight."}}},
+  { id: 62, category:"seasons", difficulty:2, languages:{ pt:{word:"OUTONO", hint:"Estação em que as folhas caem.", extraHint:"Entre verão e inverno."}, en:{word:"AUTUMN", hint:"Season when leaves fall.", extraHint:"Between summer and winter."}}},
+  { id: 63, category:"seasons", difficulty:2, languages:{ pt:{word:"PRIMAVERA", hint:"Estação do florescimento e renascimento.", extraHint:"Aumenta a atividade dos polinizadores."}, en:{word:"SPRING", hint:"Season of blooming and rebirth.", extraHint:"Pollinator activity surges."}}},
+  { id: 64, category:"seasons", difficulty:2, languages:{ pt:{word:"CHUVA", hint:"Precipitação líquida que cai das nuvens.", extraHint:"Parte do ciclo hidrológico."}, en:{word:"RAIN", hint:"Liquid precipitation from clouds.", extraHint:"Part of the hydrological cycle."}}},
+  { id: 65, category:"seasons", difficulty:3, languages:{ pt:{word:"SOLSTICIO", hint:"Dia mais longo ou mais curto do ano.", extraHint:"Ocorre duas vezes ao ano."}, en:{word:"SOLSTICE", hint:"Longest or shortest day of the year.", extraHint:"Occurs twice each year."}}},
+];
+
+const CATEGORIES = [
+  { id:"all",      label:{ pt:"Todas",   en:"All" } },
+  { id:"nature",   label:{ pt:"Natureza",en:"Nature" } },
+  { id:"elements", label:{ pt:"Elementos",en:"Elements" } },
+  { id:"fauna",    label:{ pt:"Fauna",   en:"Fauna" } },
+  { id:"seasons",  label:{ pt:"Estações",en:"Seasons" } },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   § 04.3 — Persistence schema v1
+   ═══════════════════════════════════════════════════════════════ */
+const STORAGE_KEY = "ecolex.v1";
+const DEFAULT_PERSISTED = {
+  schema: 1,
+  preferences: { wordLang: "en", hintLang: "pt", category: "all", reducedMotion: false },
+  streak: 0,
+  bestStreak: 0,
+  stats: { wins: 0, losses: 0, byCategory: {} },
+  glossary: [],
+  playedIds: [],
+  onboarded: false,
+};
+
+function loadPersisted() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { ...DEFAULT_PERSISTED };
+    const parsed = JSON.parse(raw);
+    if (parsed.schema !== 1) return { ...DEFAULT_PERSISTED };
+    return { ...DEFAULT_PERSISTED, ...parsed };
+  } catch (err) {
+    console.warn("Falha ao ler localStorage, usando padrão:", err);
+    return { ...DEFAULT_PERSISTED };
+  }
+}
+function savePersisted(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (err) {
+    console.warn("Falha ao persistir:", err);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   § 03 — Utilities
+   ═══════════════════════════════════════════════════════════════ */
+// RNG: sorteio sem repetição até exaurir
+function pickWord(pool, playedIds) {
+  const available = pool.filter(w => !playedIds.includes(w.id));
+  const set = available.length > 0 ? available : pool;
+  return set[Math.floor(Math.random() * set.length)];
+}
+
+const POWERUP_KINDS = ["rain", "sun", "compost"];
+function pickPowerup(word, hintLang) {
+  let kinds = [...POWERUP_KINDS];
+  // compost só existe se extraHint estiver presente (é, sempre está, mas por contrato)
+  if (!word.languages[hintLang]?.extraHint) {
+    kinds = kinds.filter(k => k !== "compost");
+  }
+  return kinds[Math.floor(Math.random() * kinds.length)];
+}
+
+const POWERUP_META = {
+  rain:    { icon:"💧", nameKey:"powerup_rain",   descKey:"powerup_rain_desc" },
+  sun:     { icon:"☀",  nameKey:"powerup_sun",    descKey:"powerup_sun_desc" },
+  compost: { icon:"🍃", nameKey:"powerup_compost",descKey:"powerup_compost_desc" },
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   § 01 — i18n (Art. I — bilinguismo é estrutura)
+   ═══════════════════════════════════════════════════════════════ */
+const I18N = {
+  pt: {
+    app_tagline: "aprenda cultivando",
+    welcome_title: "Plante,\ncolha, aprenda.",
+    welcome_lede: "Um jogo de palavras bilíngue. Zen, sem contas, sem pressa. Cada acerto vira uma árvore no seu bosque.",
+    begin: "Começar a plantar",
+    setup_title: "Preparar a horta",
+    choose_word: "Palavra em",
+    choose_hint: "Dica em",
+    choose_category: "Categoria",
+    swap_lang: "Inverter idiomas",
+    start: "Sortear palavra",
+    hint: "dica",
+    extra_hint: "Dica extra",
+    guess_prompt: "Toque numa letra",
+    resign: "Desistir",
+    keyboard_label: "Teclado",
+    victory: "Floresceu.",
+    defeat: "Ficou bare.",
+    victory_sub: "Você plantou uma árvore.",
+    defeat_sub: "A palavra dorme no glossário. Tente de novo.",
+    listen_word: "Ouvir",
+    next_round: "Próxima palavra",
+    new_category: "Trocar categoria",
+    play_tab: "Jogar",
+    forest_tab: "Bosque",
+    gloss_tab: "Glossário",
+    streak: "sequência",
+    best: "melhor",
+    wins: "vitórias",
+    losses: "derrotas",
+    learned: "palavras",
+    forest_empty: "Seu bosque ainda está vazio.\nPlante a primeira árvore.",
+    gloss_empty: "Nenhuma palavra cultivada ainda.",
+    powerup_rain: "Chuva",
+    powerup_rain_desc: "Revela uma letra oculta",
+    powerup_sun: "Sol",
+    powerup_sun_desc: "Protege do próximo erro",
+    powerup_compost: "Composto",
+    powerup_compost_desc: "Mostra uma dica extra",
+    shield_on: "Escudo ativo",
+    powerup_used: "Power-up consumido",
+    tip_rain: "Gotejou. Uma letra apareceu.",
+    tip_sun: "Sol brilha. Um erro a mais é perdoado.",
+    tip_compost: "Terra adubada. Leia a dica extra.",
+    lives_left: (n) => `${n} de 6 folhas`,
+    win_toast: "Bem feito.",
+    loss_toast: "A árvore murchou.",
+    lang_pt: "Português",
+    lang_en: "Inglês",
+  },
+  en: {
+    app_tagline: "learn by cultivating",
+    welcome_title: "Plant,\nharvest, learn.",
+    welcome_lede: "A bilingual word game. Zen, no accounts, no hurry. Every win becomes a tree in your grove.",
+    begin: "Start planting",
+    setup_title: "Prepare the plot",
+    choose_word: "Word in",
+    choose_hint: "Hint in",
+    choose_category: "Category",
+    swap_lang: "Swap languages",
+    start: "Draw a word",
+    hint: "hint",
+    extra_hint: "Extra hint",
+    guess_prompt: "Tap a letter",
+    resign: "Give up",
+    keyboard_label: "Keyboard",
+    victory: "Bloomed.",
+    defeat: "Went bare.",
+    victory_sub: "You planted a tree.",
+    defeat_sub: "The word rests in the glossary. Try again.",
+    listen_word: "Listen",
+    next_round: "Next word",
+    new_category: "Change category",
+    play_tab: "Play",
+    forest_tab: "Grove",
+    gloss_tab: "Glossary",
+    streak: "streak",
+    best: "best",
+    wins: "wins",
+    losses: "losses",
+    learned: "words",
+    forest_empty: "Your grove is still empty.\nPlant the first tree.",
+    gloss_empty: "No word cultivated yet.",
+    powerup_rain: "Rain",
+    powerup_rain_desc: "Reveal a hidden letter",
+    powerup_sun: "Sun",
+    powerup_sun_desc: "Shield the next miss",
+    powerup_compost: "Compost",
+    powerup_compost_desc: "Show an extra hint",
+    shield_on: "Shield active",
+    powerup_used: "Power-up used",
+    tip_rain: "A drop fell. A letter appeared.",
+    tip_sun: "Sun shines. One miss forgiven.",
+    tip_compost: "Soil enriched. Read the extra hint.",
+    lives_left: (n) => `${n} of 6 leaves`,
+    win_toast: "Well done.",
+    loss_toast: "The tree withered.",
+    lang_pt: "Portuguese",
+    lang_en: "English",
+  }
+};
+function t(lang, key, ...args) {
+  const v = I18N[lang]?.[key];
+  if (typeof v === "function") return v(...args);
+  return v ?? key;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   § 05.1 — Reducer (pure)
+   ═══════════════════════════════════════════════════════════════ */
+const initialState = {
+  // GameState
+  phase: "setup",          // setup | playing | victory | defeat
+  word: null,              // Word entry
+  guessed: [],             // letters tried
+  missCount: 0,
+  powerup: { kind: null, used: false, activeEffect: null },
+  startedAt: null,
+  // derived from prefs at start
+  wordLang: "en",
+  hintLang: "pt",
+  category: "all",
+  // UI-only
+  showExtraHint: false,
+  lastAction: null,        // for toasts
+};
+
+function normalize(str) {
+  return (str || "").toUpperCase();
+}
+
+function getLetters(word) {
+  return normalize(word.languages[word._wordLang || "en"].word).split("");
+}
+
+function computeRevealed(state) {
+  if (!state.word) return [];
+  const letters = normalize(state.word.languages[state.wordLang].word).split("");
+  return letters.map(l => l === " " || state.guessed.includes(l));
+}
+
+function gameReducer(state, action) {
+  switch (action.type) {
+    case "START_ROUND": {
+      const { pool, playedIds, wordLang, hintLang, category } = action.payload;
+      const word = pickWord(pool, playedIds);
+      const powerupKind = pickPowerup(word, hintLang);
+      return {
+        ...state,
+        phase: "playing",
+        word,
+        guessed: [],
+        missCount: 0,
+        powerup: { kind: powerupKind, used: false, activeEffect: null },
+        startedAt: Date.now(),
+        wordLang, hintLang, category,
+        showExtraHint: false,
+        lastAction: { type: "START_ROUND" },
+      };
+    }
+    case "GUESS_LETTER": {
+      if (state.phase !== "playing") return state;
+      const letter = normalize(action.payload.letter);
+      if (!letter.match(/^[A-Z]$/)) return state;
+      if (state.guessed.includes(letter)) return state;
+
+      const letters = normalize(state.word.languages[state.wordLang].word).split("");
+      const hit = letters.includes(letter);
+
+      const nextGuessed = [...state.guessed, letter];
+      let nextMiss = state.missCount;
+      let nextActive = state.powerup.activeEffect;
+      let actionTag = hit ? "HIT" : "MISS";
+
+      if (!hit) {
+        // shield absorve o erro
+        if (state.powerup.activeEffect === "shield") {
+          nextActive = null;
+          actionTag = "SHIELDED";
+        } else {
+          nextMiss = state.missCount + 1;
+        }
+      }
+
+      // verificar vitória
+      const allRevealed = letters.every(l => l === " " || nextGuessed.includes(l));
+      let phase = state.phase;
+      if (allRevealed) phase = "victory";
+      else if (nextMiss >= 6) phase = "defeat";
+
+      return {
+        ...state,
+        guessed: nextGuessed,
+        missCount: nextMiss,
+        phase,
+        powerup: { ...state.powerup, activeEffect: nextActive },
+        lastAction: { type: actionTag, letter },
+      };
+    }
+    case "ACTIVATE_POWERUP": {
+      if (state.phase !== "playing") return state;
+      if (state.powerup.used) return state;
+      const { kind } = state.powerup;
+      let patch = { powerup: { ...state.powerup, used: true } };
+      let tip = null;
+      if (kind === "rain") {
+        const letters = normalize(state.word.languages[state.wordLang].word).split("");
+        const hidden = [...new Set(letters.filter(l => l !== " " && !state.guessed.includes(l)))];
+        if (hidden.length === 0) return state;
+        const revealLetter = hidden[Math.floor(Math.random() * hidden.length)];
+        const nextGuessed = [...state.guessed, revealLetter];
+        const allRevealed = letters.every(l => l === " " || nextGuessed.includes(l));
+        patch.guessed = nextGuessed;
+        if (allRevealed) patch.phase = "victory";
+        tip = "rain";
+      } else if (kind === "sun") {
+        patch.powerup.activeEffect = "shield";
+        tip = "sun";
+      } else if (kind === "compost") {
+        patch.showExtraHint = true;
+        tip = "compost";
+      }
+      patch.lastAction = { type: "POWERUP", kind, tip };
+      return { ...state, ...patch };
+    }
+    case "RESIGN": {
+      if (state.phase !== "playing") return state;
+      return { ...state, phase: "defeat", lastAction: { type: "RESIGN" } };
+    }
+    case "RESET_TO_SETUP": {
+      return { ...state, phase: "setup", lastAction: null };
+    }
+    case "CLEAR_LAST_ACTION": {
+      return { ...state, lastAction: null };
+    }
+    default:
+      return state;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   § 06.2 — Tree SVG (6 estágios)
+   Camadas sobrepostas; fade-in/out por estágio
+   ═══════════════════════════════════════════════════════════════ */
+function TreeSVG({ stage }) {
+  // stage: 0..5   (se missCount=6 → dead, já tratado na UI)
+  // Ordem: flourishing(0) → petals-fall(1) → yellowing(2) → shedding(3) → bare(4-5) → dead(6)
+  const s = Math.min(stage, 6);
+
+  // Visibilidade por estágio
+  const show = {
+    trunk: true,
+    fullCanopy: s <= 1,   // 0,1
+    yellowCanopy: s === 2,
+    sparseCanopy: s === 3,
+    bareBranches: s >= 4,
+    deadTrunk: s >= 6,
+    flowers: s === 0,
+    fallenPetals: s >= 1,
+    fallenLeaves: s >= 3,
+  };
+
+  return h("svg",
+    { viewBox: "0 0 300 300", role: "img", "aria-label": `Árvore em estágio ${s} de 6`, xmlns:"http://www.w3.org/2000/svg" },
+    [
+      // Solo / base
+      h("ellipse", { key:"ground", cx:150, cy:265, rx:110, ry:12, fill:"var(--moss-100)", opacity:.7 }),
+      h("ellipse", { key:"ground2", cx:150, cy:268, rx:80, ry:6, fill:"var(--earth-300)", opacity:.4 }),
+
+      // Pétalas caídas (após primeiro erro)
+      show.fallenPetals && h("g", { key:"petals", opacity: .75 },
+        h("circle",{cx:80,cy:262,r:2.2,fill:"var(--terra-300)"}),
+        h("circle",{cx:105,cy:264,r:1.8,fill:"var(--sun-500)"}),
+        h("circle",{cx:210,cy:263,r:2,fill:"var(--terra-300)"}),
+        h("circle",{cx:225,cy:266,r:1.5,fill:"var(--sun-300)"}),
+      ),
+      show.fallenLeaves && h("g", { key:"leaves" },
+        h("path",{d:"M60,260 q3,-2 5,1 q-2,2 -5,-1z", fill:"var(--earth-500)", opacity:.7}),
+        h("path",{d:"M240,263 q3,-2 5,1 q-2,2 -5,-1z", fill:"var(--earth-500)", opacity:.7}),
+        h("path",{d:"M120,267 q3,-2 5,1 q-2,2 -5,-1z", fill:"var(--earth-300)", opacity:.7}),
+      ),
+
+      // Tronco — sempre visível
+      h("path", {
+        key:"trunk",
+        d:"M145,260 C142,230 148,200 146,170 C144,150 152,130 150,100",
+        stroke: show.deadTrunk ? "var(--earth-900)" : "var(--earth-700)",
+        strokeWidth: 10,
+        strokeLinecap:"round",
+        fill:"none",
+        opacity: show.deadTrunk ? .75 : 1,
+      }),
+      // Galhos principais
+      h("path", {
+        key:"branch-l",
+        d:"M148,150 C130,140 110,135 95,130",
+        stroke: show.deadTrunk ? "var(--earth-900)" : "var(--earth-700)",
+        strokeWidth: 5, strokeLinecap:"round", fill:"none",
+        opacity: show.deadTrunk ? .75 : 1,
+      }),
+      h("path", {
+        key:"branch-r",
+        d:"M149,135 C170,120 190,115 210,110",
+        stroke: show.deadTrunk ? "var(--earth-900)" : "var(--earth-700)",
+        strokeWidth: 5, strokeLinecap:"round", fill:"none",
+        opacity: show.deadTrunk ? .75 : 1,
+      }),
+      h("path", {
+        key:"branch-top",
+        d:"M150,100 C160,85 148,70 155,55",
+        stroke: show.deadTrunk ? "var(--earth-900)" : "var(--earth-700)",
+        strokeWidth: 4, strokeLinecap:"round", fill:"none",
+        opacity: show.deadTrunk ? .75 : 1,
+      }),
+
+      // Copa verde cheia
+      h("g", { key:"canopy-full", className:"tree-layer", style:{ opacity: show.fullCanopy ? 1 : 0 } },
+        // camada de trás
+        h("ellipse",{cx:150,cy:90,rx:80,ry:70,fill:"var(--moss-500)",opacity:.85}),
+        // camada mid
+        h("ellipse",{cx:110,cy:95,rx:50,ry:45,fill:"var(--moss-700)"}),
+        h("ellipse",{cx:185,cy:85,rx:55,ry:50,fill:"var(--moss-700)"}),
+        h("ellipse",{cx:150,cy:60,rx:50,ry:40,fill:"var(--moss-500)"}),
+        // highlights
+        h("ellipse",{cx:130,cy:70,rx:28,ry:18,fill:"var(--moss-300)",opacity:.6}),
+        h("ellipse",{cx:185,cy:75,rx:20,ry:14,fill:"var(--moss-300)",opacity:.5}),
+      ),
+      // Flores (só no estágio 0)
+      show.flowers && h("g", { key:"flowers", className:"tree-layer" },
+        h("circle",{cx:115,cy:70,r:4,fill:"var(--terra-300)"}),
+        h("circle",{cx:115,cy:70,r:1.5,fill:"var(--sun-500)"}),
+        h("circle",{cx:175,cy:50,r:4,fill:"var(--sun-300)"}),
+        h("circle",{cx:175,cy:50,r:1.5,fill:"var(--terra-500)"}),
+        h("circle",{cx:200,cy:90,r:4,fill:"var(--terra-300)"}),
+        h("circle",{cx:200,cy:90,r:1.5,fill:"var(--sun-500)"}),
+        h("circle",{cx:140,cy:50,r:3.5,fill:"var(--sun-100)"}),
+        h("circle",{cx:140,cy:50,r:1.2,fill:"var(--terra-500)"}),
+        h("circle",{cx:220,cy:120,r:3.5,fill:"var(--terra-300)"}),
+      ),
+
+      // Copa amarelando
+      h("g", { key:"canopy-yellow", className:"tree-layer", style:{ opacity: show.yellowCanopy ? 1 : 0 } },
+        h("ellipse",{cx:150,cy:90,rx:78,ry:68,fill:"var(--sun-500)",opacity:.5}),
+        h("ellipse",{cx:110,cy:95,rx:48,ry:42,fill:"var(--sun-300)"}),
+        h("ellipse",{cx:185,cy:85,rx:52,ry:48,fill:"var(--moss-300)"}),
+        h("ellipse",{cx:150,cy:60,rx:48,ry:38,fill:"var(--sun-500)",opacity:.7}),
+        h("ellipse",{cx:130,cy:70,rx:24,ry:16,fill:"var(--sun-100)",opacity:.7}),
+      ),
+
+      // Copa rala
+      h("g", { key:"canopy-sparse", className:"tree-layer", style:{ opacity: show.sparseCanopy ? 1 : 0 } },
+        h("ellipse",{cx:115,cy:100,rx:34,ry:28,fill:"var(--earth-300)",opacity:.9}),
+        h("ellipse",{cx:185,cy:90,rx:38,ry:32,fill:"var(--earth-500)",opacity:.8}),
+        h("ellipse",{cx:155,cy:70,rx:28,ry:22,fill:"var(--earth-300)",opacity:.7}),
+        // folhas soltas
+        h("path",{d:"M100,120 q5,-3 8,2 q-3,4 -8,-2z", fill:"var(--earth-500)"}),
+        h("path",{d:"M215,115 q5,-3 8,2 q-3,4 -8,-2z", fill:"var(--earth-500)"}),
+      ),
+
+      // Galhos extras pra cena "bare"
+      show.bareBranches && h("g", { key:"bare-extras" },
+        h("path",{d:"M95,130 C85,120 75,115 70,100", stroke:"var(--earth-700)", strokeWidth:2, strokeLinecap:"round", fill:"none", opacity:.8}),
+        h("path",{d:"M210,110 C220,95 230,90 238,78", stroke:"var(--earth-700)", strokeWidth:2, strokeLinecap:"round", fill:"none", opacity:.8}),
+        h("path",{d:"M155,55 C160,40 152,28 158,20", stroke:"var(--earth-700)", strokeWidth:2, strokeLinecap:"round", fill:"none", opacity:.8}),
+      ),
+
+      // Rachadura no tronco quando morto
+      show.deadTrunk && h("path", {
+        key:"crack",
+        d: "M148,170 L145,200 L149,230 L146,258",
+        stroke:"var(--ink)", strokeWidth:1.2, fill:"none", opacity:.6
+      }),
+    ].filter(Boolean)
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   § Hooks
+   ═══════════════════════════════════════════════════════════════ */
+function useSpeech() {
+  const speak = useCallback((text, lang) => {
+    try {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang === "pt" ? "pt-BR" : "en-US";
+      u.rate = 0.92;
+      u.pitch = 1.0;
+      window.speechSynthesis.speak(u);
+    } catch {/* silencioso por NF-04 */}
+  }, []);
+  return speak;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   § App · Context
+   ═══════════════════════════════════════════════════════════════ */
+const StoreCtx = createContext(null);
+
+function useStore() {
+  return useContext(StoreCtx);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   § Screens
+   ═══════════════════════════════════════════════════════════════ */
+
+function Onboarding() {
+  const { persisted, setPersisted, prefs } = useStore();
+  const L = prefs.uiLang;
+  const handleStart = () => {
+    setPersisted({ ...persisted, onboarded: true });
+  };
+  return h("div", { className:"shell" }, [
+    h(Topbar, { key:"top", minimal:true }),
+    h("div", { key:"ob", className:"onboarding" }, [
+      h("div", { key:"tree", className:"onboarding-tree" }, h(TreeSVG, { stage: 0 })),
+      h("h1", { key:"h" }, [
+        t(L, "welcome_title").split("\n")[0], h("br",{key:"br"}),
+        h("em",{key:"em"}, t(L, "welcome_title").split("\n")[1]),
+      ]),
+      h("p", { key:"tag", className:"tagline" }, t(L, "welcome_lede")),
+      h("button", { key:"btn", className:"btn btn-primary", onClick: handleStart },
+        [t(L, "begin"), h("span",{key:"a",style:{fontSize:"18px"}},"→")]),
+    ]),
+  ]);
+}
+
+function Topbar({ minimal }) {
+  const { prefs, setUiLang } = useStore();
+  const L = prefs.uiLang;
+  return h("div", { className: "topbar" }, [
+    h("div", { key:"brand", className:"brand" }, [
+      h("span",{key:"d",className:"brand-dot"}),
+      h("span",{key:"n"}, "EcoLex"),
+    ]),
+    !minimal && h("div", { key:"act", className:"top-actions" }, [
+      h("button", {
+        key:"lang",
+        className:"icon-btn",
+        "aria-label": L==="pt" ? "Mudar interface para inglês" : "Switch UI to Portuguese",
+        onClick: () => setUiLang(L==="pt" ? "en" : "pt"),
+        title: L==="pt" ? "PT · EN" : "EN · PT",
+      },
+        h("span",{style:{fontSize:"11px",fontWeight:700,letterSpacing:".08em"}}, L.toUpperCase()),
+      ),
+    ]),
+  ].filter(Boolean));
+}
+
+function SetupView() {
+  const { state, dispatch, prefs, setPrefs, persisted } = useStore();
+  const L = prefs.uiLang;
+
+  const wordLang = prefs.wordLang;
+  const hintLang = prefs.hintLang;
+  const category = prefs.category;
+
+  const swap = () => setPrefs({ ...prefs, wordLang: hintLang, hintLang: wordLang });
+  const chooseWordLang = (lang) => {
+    const otherLang = lang === "pt" ? "en" : "pt";
+    setPrefs({ ...prefs, wordLang: lang, hintLang: otherLang });
+  };
+  const chooseCat = (cat) => setPrefs({ ...prefs, category: cat });
+
+  const start = () => {
+    const pool = category === "all" ? WORDS : WORDS.filter(w => w.category === category);
+    dispatch({ type:"START_ROUND", payload: {
+      pool,
+      playedIds: persisted.playedIds,
+      wordLang, hintLang, category,
+    }});
+  };
+
+  return h(React.Fragment, null, [
+    h(Topbar, { key:"top" }),
+    h("div", { key:"hero", className:"card", style:{padding:"28px 24px"} }, [
+      h("div", { key:"eye", className:"eyebrow" }, t(L, "setup_title")),
+      h("h1", { key:"h", style:{marginTop:"6px"} }, [
+        L==="pt" ? "Prepare o " : "Prepare the ",
+        h("em",{key:"em"}, L==="pt" ? "solo." : "soil."),
+      ]),
+      h("p", { key:"p", style:{marginTop:"8px"} },
+        L==="pt" ? "Escolha o par de idiomas e a categoria. A palavra é sorteada." :
+                   "Pick the language pair and category. The word is drawn at random."),
+    ]),
+
+    h("div", { key:"lang", className:"card" }, [
+      h("div", { key:"eye", className:"eyebrow", style:{marginBottom:"14px"}}, L==="pt"?"idiomas":"languages"),
+      h("div", { key:"row", className:"lang-card" }, [
+        h("div", { key:"w", className:"lang-row" }, [
+          h("span",{key:"f",className:"lang-flag"}, wordLang.toUpperCase()),
+          h("span",{key:"l"}, t(L, "choose_word") + " " + (wordLang==="pt"?t(L,"lang_pt"):t(L,"lang_en"))),
+        ]),
+        h("button", { key:"sw", className:"swap-btn", onClick: swap, "aria-label": t(L, "swap_lang") },
+          h("svg",{width:20,height:20,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"},
+            [h("polyline",{key:"a",points:"17 1 21 5 17 9"}),
+             h("path",{key:"b",d:"M3 11V9a4 4 0 0 1 4-4h14"}),
+             h("polyline",{key:"c",points:"7 23 3 19 7 15"}),
+             h("path",{key:"d",d:"M21 13v2a4 4 0 0 1-4 4H3"})]
+          )),
+      ]),
+      h("div", { key:"row2", className:"lang-card", style:{marginTop:"10px"} }, [
+        h("div", { key:"h", className:"lang-row" }, [
+          h("span",{key:"f",className:"lang-flag hint"}, hintLang.toUpperCase()),
+          h("span",{key:"l"}, t(L, "choose_hint") + " " + (hintLang==="pt"?t(L,"lang_pt"):t(L,"lang_en"))),
+        ]),
+      ]),
+    ]),
+
+    h("div", { key:"cat", className:"card" }, [
+      h("div", { key:"eye", className:"eyebrow", style:{marginBottom:"14px"}}, t(L, "choose_category")),
+      h("div", { key:"chips", className:"chips" },
+        CATEGORIES.map(c => h("button", {
+          key: c.id,
+          className: "chip",
+          "aria-pressed": category === c.id,
+          onClick: () => chooseCat(c.id),
+        }, c.label[L]))
+      ),
+    ]),
+
+    h("div", { key:"go", style:{marginTop:"18px"} },
+      h("button", { className:"btn btn-primary btn-full", onClick: start },
+        [t(L, "start"), h("span",{key:"a",style:{fontSize:"18px"}},"→")]
+      )
+    ),
+  ]);
+}
+
+function PlayView() {
+  const { state, dispatch, prefs } = useStore();
+  const L = prefs.uiLang;
+
+  const word = state.word;
+  const letters = normalize(word.languages[state.wordLang].word).split("");
+  const revealed = computeRevealed(state);
+  const hint = word.languages[state.hintLang].hint;
+  const extraHint = word.languages[state.hintLang].extraHint;
+  const treeStage = Math.min(state.missCount, 6);
+
+  const handleGuess = (letter) => dispatch({ type:"GUESS_LETTER", payload:{ letter }});
+  const handlePower = () => dispatch({ type:"ACTIVATE_POWERUP" });
+  const handleResign = () => dispatch({ type:"RESIGN" });
+
+  // Keyboard binding
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const k = e.key.toUpperCase();
+      if (k.length === 1 && k >= "A" && k <= "Z") {
+        e.preventDefault();
+        handleGuess(k);
+      }
+      if (e.key === "Enter" && state.powerup.kind && !state.powerup.used) {
+        e.preventDefault();
+        handlePower();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [state]);
+
+  const powerupKind = state.powerup.kind;
+  const powerupMeta = powerupKind ? POWERUP_META[powerupKind] : null;
+
+  const shieldActive = state.powerup.activeEffect === "shield";
+
+  // Lives hearts
+  const hearts = Array.from({length:6}, (_,i) => i < 6 - state.missCount);
+
+  return h(React.Fragment, null, [
+    h(Topbar, { key:"top" }),
+
+    // Tree stage
+    h("div", { key:"stage", className:"stage stage-enter" },
+      h(TreeSVG, { stage: treeStage })
+    ),
+
+    // Lives
+    h("div", { key:"lives", className:"lives", style:{justifyContent:"center", marginBottom:"14px"} }, [
+      ...hearts.map((alive,i) => h("span",{key:i,className:`heart${alive?"":" lost"}`})),
+      h("span",{key:"txt",style:{marginLeft:"8px"}}, t(L,"lives_left", 6 - state.missCount)),
+    ]),
+
+    // Hint
+    h("div", { key:"hint", className:"hint-bar" }, [
+      h("span", { key:"tag", className:"hint-tag" }, `${state.hintLang.toUpperCase()} · ${t(L,"hint")}`),
+      h("span", { key:"text", className:"hint-text" }, hint),
+    ]),
+    state.showExtraHint && h("div", { key:"extra", className:"extra-hint" },
+      [h("strong",{key:"s"}, t(L,"extra_hint")+": "), extraHint]),
+
+    // Word slots
+    h("div", { key:"word", className:"word-row", role:"group", "aria-label": "Palavra" },
+      letters.map((ltr, i) =>
+        ltr === " " ?
+          h("span",{key:i, className:"slot space"}) :
+          h("span", {
+            key: i,
+            className: `slot${revealed[i]?" revealed":""}`,
+            "aria-label": revealed[i] ? `Letra ${ltr}` : "Letra oculta",
+          }, revealed[i] ? ltr : "")
+      )
+    ),
+
+    // Power-up island
+    powerupKind && h("div", { key:"pu", className:"powerup-island" }, [
+      h("button", {
+        key:"btn",
+        className: `powerup-btn ${powerupKind}${shieldActive && powerupKind==="sun"?" active-indicator":""}`,
+        onClick: handlePower,
+        disabled: state.powerup.used,
+        "aria-label": t(L, powerupMeta.nameKey) + " — " + t(L, powerupMeta.descKey),
+      }, powerupMeta.icon),
+      h("div", { key:"meta", className:"powerup-meta" }, [
+        h("div",{key:"n",className:"powerup-name"}, t(L, powerupMeta.nameKey)),
+        h("div",{key:"d",className:"powerup-desc"},
+          state.powerup.used ? t(L,"powerup_used") : t(L, powerupMeta.descKey)),
+      ]),
+      shieldActive && h("span",{key:"s",className:"shield-badge"}, ["✦ ", t(L,"shield_on")]),
+    ]),
+
+    // Keyboard
+    h("div", { key:"kb", className:"keyboard", role:"group", "aria-label": t(L,"keyboard_label")},
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(letter => {
+        const guessed = state.guessed.includes(letter);
+        const hit = guessed && letters.includes(letter);
+        const miss = guessed && !letters.includes(letter);
+        return h("button", {
+          key: letter,
+          className: `key${hit?" hit":""}${miss?" miss":""}`,
+          disabled: guessed || state.phase !== "playing",
+          onClick: () => handleGuess(letter),
+          "aria-label": `Letra ${letter}${guessed ? (hit ? " — acerto":" — erro"):""}`,
+        }, letter);
+      })
+    ),
+
+    // Resign
+    h("div", { key:"resign", style:{marginTop:"16px", textAlign:"center"} },
+      h("button",{className:"btn btn-danger", style:{minHeight:"38px", fontSize:"13px"}, onClick: handleResign}, t(L,"resign"))
+    ),
+  ].filter(Boolean));
+}
+
+function EndView() {
+  const { state, dispatch, prefs, persisted, setPersisted } = useStore();
+  const L = prefs.uiLang;
+  const speak = useSpeech();
+
+  const win = state.phase === "victory";
+  const word = state.word;
+  const ptWord = word.languages.pt.word;
+  const enWord = word.languages.en.word;
+  const wordInWordLang = word.languages[state.wordLang].word;
+  const wordInHintLang = word.languages[state.hintLang].word;
+
+  // Efeito: COMMIT_RESULT — gravar no persisted
+  const committedRef = useRef(false);
+  useEffect(() => {
+    if (committedRef.current) return;
+    committedRef.current = true;
+    const next = { ...persisted };
+    next.glossary = [
+      { id: word.id, result: win?"win":"loss", misses: state.missCount, at: Date.now() },
+      ...persisted.glossary.filter(g => g.id !== word.id),
+    ].slice(0, 500);
+    next.playedIds = [...new Set([...persisted.playedIds, word.id])];
+    // se exauriu, recicla
+    const pool = state.category === "all" ? WORDS : WORDS.filter(w => w.category === state.category);
+    if (next.playedIds.length >= pool.length) next.playedIds = [word.id];
+    if (win) {
+      next.streak = persisted.streak + 1;
+      next.bestStreak = Math.max(persisted.bestStreak, next.streak);
+      next.stats = {
+        ...persisted.stats,
+        wins: persisted.stats.wins + 1,
+        byCategory: { ...persisted.stats.byCategory, [word.category]: (persisted.stats.byCategory[word.category]||0) + 1 },
+      };
+    } else {
+      next.streak = 0;
+      next.stats = { ...persisted.stats, losses: persisted.stats.losses + 1 };
+    }
+    setPersisted(next);
+  }, []);
+
+  const next = () => dispatch({ type:"RESET_TO_SETUP" });
+
+  return h(React.Fragment, null, [
+    h(Topbar, { key:"top" }),
+    h("div", { key:"card", className:"card", style:{padding:"28px 24px", textAlign:"center"} }, [
+      // Árvore final em tamanho reduzido
+      h("div",{key:"stg",className:"stage",style:{maxHeight:"30vh",marginTop:0}},
+        h(TreeSVG, { stage: win ? 0 : 6 })),
+
+      h("div", { key:"hero", className:"end-hero" }, [
+        h("div", { key:"eye", className:"eyebrow" }, win ? "✦" : "◦"),
+        h("h2", { key:"h", className:`end-title ${win?"win":"loss"}`, style:{marginTop:"6px"} },
+          win ? t(L,"victory") : t(L,"defeat")),
+        h("p", { key:"s", style:{marginTop:"8px"}}, win ? t(L,"victory_sub") : t(L,"defeat_sub")),
+      ]),
+
+      h("div", { key:"divider", className:"divider" }, [
+        h("svg",{key:"s",width:22,height:10,viewBox:"0 0 22 10",fill:"none"},
+          h("path",{d:"M1 5 q 5 -6 10 0 t 10 0", stroke:"currentColor", strokeWidth:1, fill:"none"})),
+      ]),
+
+      h("div", { key:"word", className:"end-word" }, [
+        h("span", { key:"p", className:"word-primary" }, wordInWordLang),
+        h("span", { key:"s", className:"word-secondary" }, wordInHintLang.toLowerCase()),
+      ]),
+
+      h("div", { key:"pron", className:"pronounce-row" }, [
+        h("button", { key:"en", className:"pronounce-btn", onClick: () => speak(enWord, "en") }, [
+          h("span",{key:"f",className:"flag-mini"}, "EN"),
+          h("span",{key:"i"},"🔊"),
+          h("span",{key:"w", style:{fontFamily:"var(--font-display)", fontStyle:"italic"}}, enWord.toLowerCase()),
+        ]),
+        h("button", { key:"pt", className:"pronounce-btn", onClick: () => speak(ptWord, "pt") }, [
+          h("span",{key:"f",className:"flag-mini"}, "PT"),
+          h("span",{key:"i"},"🔊"),
+          h("span",{key:"w", style:{fontFamily:"var(--font-display)", fontStyle:"italic"}}, ptWord.toLowerCase()),
+        ]),
+      ]),
+
+      h("button", { key:"n", className:"btn btn-primary btn-full", onClick: next }, [
+        t(L, "next_round"), h("span",{key:"a",style:{fontSize:"18px"}},"→")
+      ]),
+    ]),
+  ]);
+}
+
+function ForestView() {
+  const { persisted, prefs } = useStore();
+  const L = prefs.uiLang;
+  const totalWins = persisted.stats.wins;
+
+  // Trees grid — renderiza até 60 arvorezinhas (performance)
+  const count = Math.min(totalWins, 60);
+  const trees = Array.from({length: count}, (_,i) => i);
+
+  return h(React.Fragment, null, [
+    h(Topbar, { key:"top" }),
+
+    h("div", { key:"hero", className:"card" }, [
+      h("div",{key:"eye",className:"eyebrow"}, t(L,"forest_tab")),
+      h("div", { key:"r", className:"streak-hero", style:{marginTop:"6px"} }, [
+        h("span",{key:"b",className:"streak-big"}, persisted.streak),
+        h("span",{key:"l",className:"streak-label"}, t(L,"streak")),
+      ]),
+      h("div", { key:"stats", className:"stat-row" }, [
+        h("div",{key:"b",className:"stat-cell"},[
+          h("div",{key:"n",className:"stat-num"}, persisted.bestStreak),
+          h("div",{key:"l",className:"stat-lbl"}, t(L,"best")),
+        ]),
+        h("div",{key:"w",className:"stat-cell"},[
+          h("div",{key:"n",className:"stat-num"}, persisted.stats.wins),
+          h("div",{key:"l",className:"stat-lbl"}, t(L,"wins")),
+        ]),
+        h("div",{key:"ls",className:"stat-cell"},[
+          h("div",{key:"n",className:"stat-num"}, persisted.stats.losses),
+          h("div",{key:"l",className:"stat-lbl"}, t(L,"losses")),
+        ]),
+      ]),
+    ]),
+
+    h("div", { key:"grid", className:"card" },
+      trees.length === 0
+        ? h("div",{className:"forest-empty-state"},
+            t(L,"forest_empty").split("\n").map((line,i) =>
+              h(React.Fragment,{key:i},[line,i===0 && h("br",{key:"b"})])))
+        : h("div", { className:"forest-grid" },
+            trees.map(i => h("div",{key:i,className:"forest-slot",style:{animationDelay:`${Math.min(i*30,900)}ms`}},
+              h("svg",{width:"100%",viewBox:"0 0 60 60"},
+                h("g",null,[
+                  h("path",{key:"t",d:"M30,55 C28,45 32,35 30,22", stroke:"var(--earth-700)", strokeWidth:2, fill:"none", strokeLinecap:"round"}),
+                  h("circle",{key:"c1",cx:30,cy:18,r:14,fill:"var(--moss-700)"}),
+                  h("circle",{key:"c2",cx:24,cy:20,r:8,fill:"var(--moss-500)"}),
+                  h("circle",{key:"c3",cx:35,cy:15,r:7,fill:"var(--moss-300)",opacity:.75}),
+                  h("circle",{key:"f1",cx:23,cy:16,r:1.4,fill:"var(--sun-500)"}),
+                  h("circle",{key:"f2",cx:35,cy:22,r:1.4,fill:"var(--terra-300)"}),
+                ])
+              )
+            ))
+          )
+    ),
+  ]);
+}
+
+function GlossaryView() {
+  const { persisted, prefs } = useStore();
+  const L = prefs.uiLang;
+  const speak = useSpeech();
+
+  const entries = persisted.glossary;
+
+  return h(React.Fragment, null, [
+    h(Topbar, { key:"top" }),
+    h("div", { key:"head", className:"card" }, [
+      h("div",{key:"e",className:"eyebrow"}, t(L,"gloss_tab")),
+      h("h2",{key:"h",style:{marginTop:"6px"}}, `${entries.length} ${t(L,"learned")}`),
+    ]),
+    h("div", { key:"list", className:"card" },
+      entries.length === 0
+        ? h("div",{className:"forest-empty-state"}, t(L,"gloss_empty"))
+        : h("ul", { className:"gloss-list" },
+            entries.map(g => {
+              const word = WORDS.find(w => w.id === g.id);
+              if (!word) return null;
+              return h("li", { key:g.at, className:"gloss-item" }, [
+                h("div",{key:"m",className:"gloss-meta"},[
+                  h("div",{key:"w",className:"gloss-word"}, word.languages[prefs.wordLang].word),
+                  h("div",{key:"t",className:"gloss-trans"}, word.languages[prefs.hintLang].word.toLowerCase()),
+                ]),
+                h("button", {
+                  key:"pen",
+                  className:"icon-btn",
+                  "aria-label": t(L,"listen_word")+" "+word.languages.en.word,
+                  onClick: () => speak(word.languages.en.word, "en"),
+                }, h("svg",{width:18,height:18,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"},[
+                  h("polygon",{key:"s",points:"11 5 6 9 2 9 2 15 6 15 11 19 11 5"}),
+                  h("path",{key:"w1",d:"M15.54 8.46a5 5 0 0 1 0 7.07"}),
+                ])),
+                h("button", {
+                  key:"ppt",
+                  className:"icon-btn",
+                  "aria-label": t(L,"listen_word")+" "+word.languages.pt.word,
+                  onClick: () => speak(word.languages.pt.word, "pt"),
+                }, h("svg",{width:18,height:18,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"},[
+                  h("polygon",{key:"s",points:"11 5 6 9 2 9 2 15 6 15 11 19 11 5"}),
+                  h("path",{key:"w1",d:"M15.54 8.46a5 5 0 0 1 0 7.07"}),
+                  h("path",{key:"w2",d:"M19.07 4.93a10 10 0 0 1 0 14.14"}),
+                ])),
+                h("span", { key:"r", className:`gloss-result ${g.result}` },
+                  g.result === "win" ? (L==="pt"?"plantada":"planted") : (L==="pt"?"perdida":"lost")),
+              ]);
+            })
+          )
+    ),
+  ]);
+}
+
+function TabBar() {
+  const { tab, setTab, prefs } = useStore();
+  const L = prefs.uiLang;
+  const tabs = [
+    { id:"play",   label: t(L,"play_tab"),   icon:"🌱" },
+    { id:"forest", label: t(L,"forest_tab"), icon:"🌳" },
+    { id:"gloss",  label: t(L,"gloss_tab"),  icon:"📖" },
+  ];
+  return h("nav", { className:"tabs", "aria-label":"Principal" },
+    tabs.map(t0 => h("button", {
+      key: t0.id,
+      className: "tab",
+      "aria-current": tab === t0.id ? "page" : undefined,
+      onClick: () => setTab(t0.id),
+    }, [h("span",{key:"i",style:{fontSize:"15px"}}, t0.icon), h("span",{key:"t"}, t0.label)]))
+  );
+}
+
+function Toast() {
+  const { state, dispatch, prefs } = useStore();
+  const L = prefs.uiLang;
+  const [msg, setMsg] = useState(null);
+
+  useEffect(() => {
+    if (!state.lastAction) return;
+    const a = state.lastAction;
+    let m = null;
+    if (a.type === "POWERUP") {
+      if (a.tip === "rain") m = t(L,"tip_rain");
+      else if (a.tip === "sun") m = t(L,"tip_sun");
+      else if (a.tip === "compost") m = t(L,"tip_compost");
+    }
+    if (m) {
+      setMsg(m);
+      const timer = setTimeout(() => { setMsg(null); dispatch({type:"CLEAR_LAST_ACTION"}); }, 2200);
+      return () => clearTimeout(timer);
+    }
+  }, [state.lastAction]);
+
+  if (!msg) return null;
+  return h("div", { className:"toast", role:"status" }, msg);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   § App Root
+   ═══════════════════════════════════════════════════════════════ */
+function App() {
+  const [persisted, _setPersisted] = useState(loadPersisted);
+  const [state, dispatch] = useReducer(gameReducer, initialState);
+  const [tab, setTab] = useState("play");
+  const [uiLang, setUiLang] = useState(() => {
+    // Infere UI lang do idioma do navegador; default pt
+    const nav = navigator.language || "pt";
+    return nav.toLowerCase().startsWith("en") ? "en" : "pt";
+  });
+
+  const setPersisted = useCallback((next) => {
+    _setPersisted(next);
+    savePersisted(next);
+  }, []);
+
+  const prefs = useMemo(() => ({
+    uiLang,
+    wordLang: persisted.preferences.wordLang,
+    hintLang: persisted.preferences.hintLang,
+    category: persisted.preferences.category,
+  }), [uiLang, persisted.preferences]);
+
+  const setPrefs = useCallback((next) => {
+    setPersisted({
+      ...persisted,
+      preferences: {
+        wordLang: next.wordLang ?? persisted.preferences.wordLang,
+        hintLang: next.hintLang ?? persisted.preferences.hintLang,
+        category: next.category ?? persisted.preferences.category,
+        reducedMotion: persisted.preferences.reducedMotion,
+      }
+    });
+  }, [persisted, setPersisted]);
+
+  // html lang dinâmico (a11y)
+  useEffect(() => {
+    document.documentElement.lang = uiLang === "pt" ? "pt-BR" : "en";
+  }, [uiLang]);
+
+  const store = {
+    state, dispatch,
+    persisted, setPersisted,
+    prefs, setPrefs, setUiLang,
+    tab, setTab,
+  };
+
+  return h(StoreCtx.Provider, { value: store },
+    !persisted.onboarded
+      ? h(Onboarding, null)
+      : h("div", { className:"shell" }, [
+          tab === "play" && (
+            state.phase === "setup" ? h(SetupView, { key:"setup" }) :
+            state.phase === "playing" ? h(PlayView, { key:"play" }) :
+            h(EndView, { key:"end" })
+          ),
+          tab === "forest" && h(ForestView, { key:"forest" }),
+          tab === "gloss"  && h(GlossaryView, { key:"gloss" }),
+          h(TabBar, { key:"tabs" }),
+          h(Toast, { key:"toast" }),
+        ])
+  );
+}
+
+createRoot(document.getElementById('root')).render(h(App));
+</script>
+</body>
+</html>
