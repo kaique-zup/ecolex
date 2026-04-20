@@ -15,15 +15,22 @@ export function SetupView() {
   const wordLang = prefs.wordLang;
   const hintLang = prefs.hintLang;
   const category = prefs.category;
+  const ageGroup = prefs.ageGroup;
+  const isAdult = ageGroup === "adult";
 
   const chooseWordLang = (lang) => setPrefs({ ...prefs, wordLang: lang });
   const chooseHintLang = (lang) => setPrefs({ ...prefs, hintLang: lang });
   const chooseCat = (cat) => setPrefs({ ...prefs, category: cat });
+  const chooseAge = (val) => setPrefs({ ...prefs, ageGroup: val });
+  const toggleAdult = () => setPrefs({ ...prefs, ageGroup: isAdult ? 10 : "adult" });
 
   const sameLang = wordLang === hintLang;
 
   const start = () => {
-    const pool = category === "all" ? WORDS : WORDS.filter(w => w.category === category);
+    let pool = category === "all" ? WORDS : WORDS.filter(w => w.category === category);
+    if (!isAdult) {
+      pool = pool.filter(w => w.minAge <= ageGroup);
+    }
     dispatch({ type:"START_ROUND", payload: {
       pool,
       playedIds: persisted.playedIds,
@@ -66,6 +73,43 @@ export function SetupView() {
           : "Word and hint in the same language — monolingual mode."
       ),
     ].filter(Boolean)),
+
+    h("div", { key:"age", className:"card" }, [
+      h("div", { key:"eye", className:"eyebrow", style:{marginBottom:"14px"} }, t(L, "age_section")),
+      h("div", { key:"content", className:"age-section" }, [
+        h("div", { key:"num", className:"age-display" },
+          isAdult ? "∞" : ageGroup
+        ),
+        h("div", { key:"lbl", className:"age-display-label" },
+          isAdult ? t(L, "age_adult") : t(L, "age_value", ageGroup)
+        ),
+        h("input", {
+          key:"slider",
+          type:"range",
+          className:"age-slider",
+          min: 6,
+          max: 15,
+          step: 1,
+          value: isAdult ? 10 : ageGroup,
+          disabled: isAdult,
+          onChange: (e) => chooseAge(parseInt(e.target.value, 10)),
+          "aria-label": t(L, "age_label"),
+        }),
+        h("div", { key:"bounds", className:"age-slider-bounds" }, [
+          h("span", { key:"min" }, "6"),
+          h("span", { key:"max" }, "15"),
+        ]),
+        h("button", {
+          key:"adult",
+          className:"chip age-adult-toggle",
+          "aria-pressed": isAdult,
+          onClick: toggleAdult,
+        }, t(L, "age_adult")),
+      ]),
+      h("div", { key:"note", className:"lang-note", style:{marginTop:"10px"} },
+        isAdult ? t(L, "age_adult_note") : t(L, "age_note")
+      ),
+    ]),
 
     h("div", { key:"cat", className:"card" }, [
       h("div", { key:"eye", className:"eyebrow", style:{marginBottom:"14px"}}, t(L, "choose_category")),

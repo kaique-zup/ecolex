@@ -52,7 +52,7 @@ export function EndView() {
   return h(React.Fragment, null, [
     h(Topbar, { key:"top" }),
     h("div", { key:"card", className:"card", style:{padding:"28px 24px", textAlign:"center"} }, [
-      h("div",{key:"stg",className:"stage",style:{maxHeight:"30vh",marginTop:0}},
+      h("div",{key:"stg",className:"stage",style:{maxHeight:"28vh",maxWidth:"28vh",margin:"0 auto"}},
         h(TreeSVG, { stage: win ? 0 : 6 })),
 
       h("div", { key:"hero", className:"end-hero" }, [

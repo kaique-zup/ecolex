@@ -50,6 +50,12 @@ const I18N = {
     loss_toast: "A árvore murchou.",
     lang_pt: "Português",
     lang_en: "Inglês",
+    age_section: "Idade",
+    age_label: "Idade da criança",
+    age_value: (n) => `${n} anos`,
+    age_adult: "Sem restrição",
+    age_note: "Filtra palavras adequadas à idade.",
+    age_adult_note: "Todas as palavras serão incluídas.",
   },
   en: {
     app_tagline: "learn by cultivating",
@@ -102,6 +108,12 @@ const I18N = {
     loss_toast: "The tree withered.",
     lang_pt: "Portuguese",
     lang_en: "English",
+    age_section: "Age",
+    age_label: "Child's age",
+    age_value: (n) => `${n} years`,
+    age_adult: "No restriction",
+    age_note: "Filters words appropriate for the age.",
+    age_adult_note: "All words will be included.",
   }
 };
 

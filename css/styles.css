@@ -269,6 +269,85 @@ p { margin: 0; color: var(--fg-soft); line-height: 1.55; }
   border-color: var(--moss-700);
 }
 
+/* ───────── Age slider ───────── */
+.age-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+}
+.age-display {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 400;
+  color: var(--moss-900);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  min-width: 80px;
+  text-align: center;
+}
+.age-display-label {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--earth-700);
+  font-size: 15px;
+  margin-top: -2px;
+}
+.age-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--moss-300), var(--sun-500));
+  outline: none;
+  margin: 8px 0;
+}
+.age-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--moss-700);
+  border: 3px solid var(--bg-raised);
+  box-shadow: 0 2px 8px rgba(43, 58, 42, .25);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.age-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+  box-shadow: 0 2px 12px rgba(43, 58, 42, .35);
+}
+.age-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--moss-700);
+  border: 3px solid var(--bg-raised);
+  box-shadow: 0 2px 8px rgba(43, 58, 42, .25);
+  cursor: pointer;
+}
+.age-slider:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.age-slider:disabled::-webkit-slider-thumb {
+  cursor: default;
+}
+.age-slider-bounds {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 12px;
+  color: var(--fg-soft);
+  opacity: 0.7;
+}
+.age-adult-toggle {
+  margin-top: 6px;
+}
+
 /* ───────── Lang toggle — hero ───────── */
 .lang-card {
   display: flex;

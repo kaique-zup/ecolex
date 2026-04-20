@@ -32,6 +32,7 @@ export function App() {
     wordLang: persisted.preferences.wordLang,
     hintLang: persisted.preferences.hintLang,
     category: persisted.preferences.category,
+    ageGroup: persisted.preferences.ageGroup,
   }), [uiLang, persisted.preferences]);
 
   const setPrefs = useCallback((next) => {
@@ -42,6 +43,7 @@ export function App() {
         hintLang: next.hintLang ?? persisted.preferences.hintLang,
         category: next.category ?? persisted.preferences.category,
         reducedMotion: persisted.preferences.reducedMotion,
+        ageGroup: next.ageGroup ?? persisted.preferences.ageGroup,
       }
     });
   }, [persisted, setPersisted]);
