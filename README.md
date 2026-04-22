@@ -2,6 +2,8 @@
 
 **EcoLex** é uma releitura moderna, educativa e ecológica do clássico jogo da forca. Desenvolvido para crianças de todas as idades (especialmente na faixa dos 10 anos), o jogo substitui a temática punitiva tradicional por uma mecânica de cuidado com o meio ambiente e aprendizado de idiomas.
 
+Acesse e se divirta aqui: https://kaique-zup.github.io/ecolex/
+
 ---
 
 ## ✨ Diferenciais do Projeto
