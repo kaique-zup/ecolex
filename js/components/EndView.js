@@ -6,6 +6,7 @@ import { WORDS } from '../data/words.js';
 import { pickSpeciesForWord } from '../species.js';
 import { getSpecies } from '../data/treeSpecies.js';
 import { getWordDifficulty } from '../difficulty.js';
+import { speakable } from '../pronunciation.js';
 import { Topbar } from './Topbar.js';
 import { TreeSVG } from './TreeSVG.js';
 
@@ -85,15 +86,15 @@ export function EndView() {
       ]),
 
       h("div", { key:"pron", className:"pronounce-row" }, [
-        h("button", { key:"en", className:"pronounce-btn", onClick: () => speak(enWord, "en") }, [
+        h("button", { key:"en", className:"pronounce-btn", onClick: () => speak(speakable(enWord, "en"), "en") }, [
           h("span",{key:"f",className:"flag-mini"}, "EN"),
           h("span",{key:"i"},"🔊"),
           h("span",{key:"w", style:{fontFamily:"var(--font-display)", fontStyle:"italic"}}, enWord.toLowerCase()),
         ]),
-        h("button", { key:"pt", className:"pronounce-btn", onClick: () => speak(ptWord, "pt") }, [
+        h("button", { key:"pt", className:"pronounce-btn", onClick: () => speak(speakable(ptWord, "pt"), "pt") }, [
           h("span",{key:"f",className:"flag-mini"}, "PT"),
           h("span",{key:"i"},"🔊"),
-          h("span",{key:"w", style:{fontFamily:"var(--font-display)", fontStyle:"italic"}}, ptWord.toLowerCase()),
+          h("span",{key:"w", style:{fontFamily:"var(--font-display)", fontStyle:"italic"}}, speakable(ptWord, "pt")),
         ]),
       ]),
 
