@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useStore } from '../store.js';
 import { t } from '../i18n.js';
 import { normalize, computeRevealed, POWERUP_META } from '../utils.js';
+import { pickSpeciesForWord } from '../species.js';
+import { getSpecies } from '../data/treeSpecies.js';
 import { Topbar } from './Topbar.js';
 import { TreeSVG } from './TreeSVG.js';
 
@@ -17,6 +19,8 @@ export function PlayView() {
   const revealed = computeRevealed(state);
   const hint = word.languages[state.hintLang].hint;
   const treeStage = Math.min(state.missCount, 6);
+  const species = useMemo(() => pickSpeciesForWord(word, state.wordLang), [word && word.id, state.wordLang]);
+  const speciesName = t(L, getSpecies(species).nameKey);
 
   useEffect(() => { setHintOpen(false); }, [word && word.id]);
 
@@ -48,7 +52,7 @@ export function PlayView() {
 
   const treePanel = h("aside", { className:"play-tree", "aria-label": L==="pt"?"Árvore":"Tree" }, [
     h("div",{key:"s",className:"stage stage-enter"},
-      h(TreeSVG, { stage: treeStage })),
+      h(TreeSVG, { stage: treeStage, species, speciesName })),
     h("div", { key:"l", className:"lives" }, [
       ...hearts.map((alive,i) => h("span",{key:i,className:`heart${alive?"":" lost"}`})),
       h("span",{key:"txt",style:{marginLeft:"8px"}}, t(L,"lives_left", 6 - state.missCount)),

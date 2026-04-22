@@ -8,6 +8,7 @@ const DEFAULT_PERSISTED = {
   stats: { wins: 0, losses: 0, byCategory: {} },
   glossary: [],
   playedIds: [],
+  forest: [],
   onboarded: false,
 };
 

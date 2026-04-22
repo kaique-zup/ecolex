@@ -1,8 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { useStore } from '../store.js';
 import { t } from '../i18n.js';
 import { useSpeech } from '../hooks.js';
 import { WORDS } from '../data/words.js';
+import { pickSpeciesForWord } from '../species.js';
+import { getSpecies } from '../data/treeSpecies.js';
+import { getWordDifficulty } from '../difficulty.js';
 import { Topbar } from './Topbar.js';
 import { TreeSVG } from './TreeSVG.js';
 
@@ -18,7 +21,12 @@ export function EndView() {
   const ptWord = word.languages.pt.word;
   const enWord = word.languages.en.word;
   const wordInWordLang = word.languages[state.wordLang].word;
-  const wordInHintLang = word.languages[state.hintLang].word;
+  const otherLang = state.wordLang === "pt" ? "en" : "pt";
+  const wordInOtherLang = word.languages[otherLang].word;
+
+  const species = useMemo(() => pickSpeciesForWord(word, state.wordLang), [word.id, state.wordLang]);
+  const difficulty = useMemo(() => getWordDifficulty(word, state.wordLang), [word.id, state.wordLang]);
+  const speciesName = t(L, getSpecies(species).nameKey);
 
   const committedRef = useRef(false);
   useEffect(() => {
@@ -40,6 +48,10 @@ export function EndView() {
         wins: persisted.stats.wins + 1,
         byCategory: { ...persisted.stats.byCategory, [word.category]: (persisted.stats.byCategory[word.category]||0) + 1 },
       };
+      next.forest = [
+        ...(persisted.forest || []),
+        { speciesId: species, wordId: word.id, difficulty, at: Date.now() },
+      ].slice(-500);
     } else {
       next.streak = 0;
       next.stats = { ...persisted.stats, losses: persisted.stats.losses + 1 };
@@ -52,8 +64,8 @@ export function EndView() {
   return h(React.Fragment, null, [
     h(Topbar, { key:"top" }),
     h("div", { key:"card", className:"card", style:{padding:"28px 24px", textAlign:"center"} }, [
-      h("div",{key:"stg",className:"stage",style:{maxHeight:"30vh",marginTop:0}},
-        h(TreeSVG, { stage: win ? 0 : 6 })),
+      h("div",{key:"stg",className:"stage",style:{maxHeight:"28vh",maxWidth:"28vh",margin:"0 auto"}},
+        h(TreeSVG, { stage: win ? 0 : 6, species, speciesName })),
 
       h("div", { key:"hero", className:"end-hero" }, [
         h("div", { key:"eye", className:"eyebrow" }, win ? "✦" : "◦"),
@@ -69,7 +81,7 @@ export function EndView() {
 
       h("div", { key:"word", className:"end-word" }, [
         h("span", { key:"p", className:"word-primary" }, wordInWordLang),
-        h("span", { key:"s", className:"word-secondary" }, wordInHintLang.toLowerCase()),
+        h("span", { key:"s", className:"word-secondary" }, wordInOtherLang.toLowerCase()),
       ]),
 
       h("div", { key:"pron", className:"pronounce-row" }, [
