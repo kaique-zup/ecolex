@@ -3,9 +3,10 @@ import { useStore } from '../store.js';
 import { t } from '../i18n.js';
 import { useSpeech } from '../hooks.js';
 import { WORDS } from '../data/words.js';
-import { pickSpeciesForWord } from '../species.js';
+import { rollForestEntry } from '../species.js';
 import { getSpecies } from '../data/treeSpecies.js';
-import { getWordDifficulty } from '../difficulty.js';
+import { RARITY_META } from '../data/rarityTiers.js';
+import { getMaterial } from '../data/materials.js';
 import { speakable } from '../pronunciation.js';
 import { Topbar } from './Topbar.js';
 import { TreeSVG } from './TreeSVG.js';
@@ -25,9 +26,15 @@ export function EndView() {
   const otherLang = state.wordLang === "pt" ? "en" : "pt";
   const wordInOtherLang = word.languages[otherLang].word;
 
-  const species = useMemo(() => pickSpeciesForWord(word, state.wordLang), [word.id, state.wordLang]);
-  const difficulty = useMemo(() => getWordDifficulty(word, state.wordLang), [word.id, state.wordLang]);
+  const roll = useMemo(() => rollForestEntry(word, state.wordLang), [word.id, state.wordLang]);
+  const { speciesId: species, rarity, material, difficulty } = roll;
   const speciesName = t(L, getSpecies(species).nameKey);
+  const rarityName = t(L, RARITY_META[rarity].nameKey);
+  const materialMeta = getMaterial(material);
+  const materialName = materialMeta ? t(L, materialMeta.nameKey) : null;
+  const fullLabel = materialName
+    ? `${speciesName} — ${rarityName} (${materialName})`
+    : `${speciesName} — ${rarityName}`;
 
   const committedRef = useRef(false);
   useEffect(() => {
@@ -51,7 +58,7 @@ export function EndView() {
       };
       next.forest = [
         ...(persisted.forest || []),
-        { speciesId: species, wordId: word.id, difficulty, at: Date.now() },
+        { speciesId: species, rarity, material, wordId: word.id, difficulty, at: Date.now() },
       ].slice(-500);
     } else {
       next.streak = 0;
@@ -65,8 +72,13 @@ export function EndView() {
   return h(React.Fragment, null, [
     h(Topbar, { key:"top" }),
     h("div", { key:"card", className:"card", style:{padding:"28px 24px", textAlign:"center"} }, [
-      h("div",{key:"stg",className:"stage",style:{maxHeight:"28vh",maxWidth:"28vh",margin:"0 auto"}},
-        h(TreeSVG, { stage: win ? 0 : 6, species, speciesName })),
+      h("div",{key:"stg",className:`stage end-tree-halo halo-${win?rarity:"common"}`,style:{maxHeight:"28vh",maxWidth:"28vh",margin:"0 auto"},title:win?fullLabel:undefined},
+        h(TreeSVG, { stage: win ? 0 : 6, species, speciesName, rarity: win?rarity:null, material: win?material:null })),
+      win && h("div",{key:"meta",className:"end-tree-meta"},[
+        h("span",{key:"s",className:"end-tree-species"}, speciesName),
+        h("span",{key:"r",className:`end-tree-rarity rarity-${rarity}`}, rarityName),
+        materialName && h("span",{key:"m",className:`end-tree-material material-${material}`}, materialName),
+      ].filter(Boolean)),
 
       h("div", { key:"hero", className:"end-hero" }, [
         h("div", { key:"eye", className:"eyebrow" }, win ? "✦" : "◦"),

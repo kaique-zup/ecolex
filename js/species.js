@@ -1,5 +1,7 @@
 import { TREE_SPECIES, speciesByDifficulty, DEFAULT_SPECIES_ID } from "./data/treeSpecies.js";
 import { getWordDifficulty } from "./difficulty.js";
+import { rollRarity, DEFAULT_RARITY } from "./data/rarityTiers.js";
+import { rollMaterial } from "./data/materials.js";
 
 export function pickSpeciesForWord(word, wordLang) {
   if (!word) return DEFAULT_SPECIES_ID;
@@ -9,4 +11,12 @@ export function pickSpeciesForWord(word, wordLang) {
   return pool[word.id % pool.length];
 }
 
-export { TREE_SPECIES, DEFAULT_SPECIES_ID };
+export function rollForestEntry(word, wordLang, rng = Math.random) {
+  const difficulty = getWordDifficulty(word, wordLang);
+  const speciesId = pickSpeciesForWord(word, wordLang);
+  const rarity = rollRarity(difficulty, rng);
+  const material = rollMaterial(rng);
+  return { speciesId, rarity, material, difficulty };
+}
+
+export { TREE_SPECIES, DEFAULT_SPECIES_ID, DEFAULT_RARITY };

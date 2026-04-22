@@ -2,6 +2,8 @@ import React from 'react';
 import { useStore } from '../store.js';
 import { t } from '../i18n.js';
 import { getSpecies, DEFAULT_SPECIES_ID } from '../data/treeSpecies.js';
+import { RARITY_META, DEFAULT_RARITY } from '../data/rarityTiers.js';
+import { getMaterial } from '../data/materials.js';
 import { Topbar } from './Topbar.js';
 
 const h = React.createElement;
@@ -75,6 +77,16 @@ function renderMiniTree(shape, palette) {
   ];
 }
 
+function countBy(list, key) {
+  const counts = {};
+  for (const item of list) {
+    const k = item[key];
+    if (!k) continue;
+    counts[k] = (counts[k] || 0) + 1;
+  }
+  return counts;
+}
+
 export function ForestView() {
   const { persisted, prefs } = useStore();
   const L = prefs.uiLang;
@@ -82,8 +94,12 @@ export function ForestView() {
 
   const storedForest = persisted.forest || [];
   const padCount = Math.max(0, totalWins - storedForest.length);
-  const pad = Array.from({ length: padCount }, () => ({ speciesId: DEFAULT_SPECIES_ID }));
+  const pad = Array.from({ length: padCount }, () => ({ speciesId: DEFAULT_SPECIES_ID, rarity: DEFAULT_RARITY }));
   const entries = [...pad, ...storedForest].slice(-60);
+
+  const rarityCounts = countBy(storedForest, "rarity");
+  const materialCounts = countBy(storedForest, "material");
+  const hasRareLoot = Object.keys(rarityCounts).some(r => r !== "common") || Object.keys(materialCounts).length > 0;
 
   return h(React.Fragment, null, [
     h(Topbar, { key:"top" }),
@@ -108,7 +124,16 @@ export function ForestView() {
           h("div",{key:"l",className:"stat-lbl"}, t(L,"losses")),
         ]),
       ]),
-    ]),
+      hasRareLoot && h("div",{key:"loot",className:"rarity-legend"},[
+        ...Object.entries(rarityCounts)
+          .filter(([r]) => r !== "common")
+          .map(([r,n]) => h("span",{key:`r-${r}`,className:`rarity-chip rarity-${r}`}, `${t(L, RARITY_META[r].nameKey)} · ${n}`)),
+        ...Object.entries(materialCounts).map(([m,n]) => {
+          const meta = getMaterial(m);
+          return h("span",{key:`m-${m}`,className:`rarity-chip material-${m}`}, `${t(L, meta.nameKey)} · ${n}`);
+        }),
+      ]),
+    ].filter(Boolean)),
 
     h("div", { key:"grid", className:"card" },
       entries.length === 0
@@ -118,17 +143,25 @@ export function ForestView() {
         : h("div", { className:"forest-grid" },
             entries.map((entry, i) => {
               const meta = getSpecies(entry.speciesId);
+              const rarity = entry.rarity || DEFAULT_RARITY;
+              const materialMeta = getMaterial(entry.material);
+              const palette = materialMeta ? materialMeta.palette : meta.palette;
               const name = t(L, meta.nameKey);
-              const tooltip = t(L, "species_tooltip", name);
+              const rarityName = t(L, RARITY_META[rarity].nameKey);
+              const materialName = materialMeta ? t(L, materialMeta.nameKey) : null;
+              const tooltip = materialName
+                ? `${name} — ${rarityName} (${materialName})`
+                : `${name} — ${rarityName}`;
+              const shimmer = materialMeta ? `tree-shimmer tree-shimmer-${materialMeta.shimmer}` : "";
               return h("div", {
                 key: i,
-                className: "forest-slot",
+                className: `forest-slot halo-${rarity}`,
                 style: { animationDelay: `${Math.min(i*30,900)}ms` },
                 title: tooltip,
                 "aria-label": tooltip,
               },
-                h("svg",{width:"100%",viewBox:"0 0 60 60"},
-                  h("g",null, renderMiniTree(meta.shape, meta.palette))
+                h("svg",{width:"100%",viewBox:"0 0 60 60",className: shimmer || undefined},
+                  h("g",null, renderMiniTree(meta.shape, palette))
                 )
               );
             })

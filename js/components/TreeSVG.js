@@ -1,5 +1,6 @@
 import React from 'react';
 import { getSpecies, DEFAULT_SPECIES_ID } from '../data/treeSpecies.js';
+import { getMaterial } from '../data/materials.js';
 
 const h = React.createElement;
 
@@ -134,10 +135,14 @@ function renderFlowers(palette) {
   ];
 }
 
-export function TreeSVG({ stage, species = DEFAULT_SPECIES_ID, speciesName }) {
+export function TreeSVG({ stage, species = DEFAULT_SPECIES_ID, speciesName, material = null, rarity = null }) {
   const s = Math.min(stage, 6);
   const meta = getSpecies(species);
-  const { palette, shape } = meta;
+  const materialMeta = getMaterial(material);
+  const palette = materialMeta ? materialMeta.palette : meta.palette;
+  const shape = meta.shape;
+  const shimmerClass = materialMeta ? `tree-shimmer tree-shimmer-${materialMeta.shimmer}` : "";
+  const rarityClass = rarity && rarity !== "common" ? `tree-rarity-${rarity}` : "";
 
   const show = {
     fullCanopy: s <= 1,
@@ -155,7 +160,8 @@ export function TreeSVG({ stage, species = DEFAULT_SPECIES_ID, speciesName }) {
     : `Árvore em estágio ${s} de 6`;
 
   return h("svg",
-    { viewBox: "0 0 300 300", role: "img", "aria-label": ariaLabel, xmlns:"http://www.w3.org/2000/svg" },
+    { viewBox: "0 0 300 300", role: "img", "aria-label": ariaLabel, xmlns:"http://www.w3.org/2000/svg",
+      className: `${shimmerClass} ${rarityClass}`.trim() || undefined },
     [
       h("ellipse", { key:"ground", cx:150, cy:265, rx:110, ry:12, fill:v("--moss-100"), opacity:.7 }),
       h("ellipse", { key:"ground2", cx:150, cy:268, rx:80, ry:6, fill:v("--earth-300"), opacity:.4 }),
