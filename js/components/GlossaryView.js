@@ -27,10 +27,11 @@ export function GlossaryView() {
             entries.map(g => {
               const word = WORDS.find(w => w.id === g.id);
               if (!word) return null;
+              const otherLang = prefs.wordLang === "pt" ? "en" : "pt";
               return h("li", { key:g.at, className:"gloss-item" }, [
                 h("div",{key:"m",className:"gloss-meta"},[
                   h("div",{key:"w",className:"gloss-word"}, word.languages[prefs.wordLang].word),
-                  h("div",{key:"t",className:"gloss-trans"}, word.languages[prefs.hintLang].word.toLowerCase()),
+                  h("div",{key:"t",className:"gloss-trans"}, word.languages[otherLang].word.toLowerCase()),
                 ]),
                 h("button", {
                   key:"pen",
