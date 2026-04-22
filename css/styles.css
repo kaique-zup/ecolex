@@ -379,6 +379,73 @@ p { margin: 0; color: var(--fg-soft); line-height: 1.55; }
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Orientação — celular em paisagem (altura baixa)
+   Split em duas colunas com árvore compacta à direita
+   ───────────────────────────────────────────────────────────── */
+@media (orientation: landscape) and (max-height: 520px) {
+  .shell {
+    padding: 10px 14px 70px;
+  }
+  .topbar {
+    padding: 8px 0 6px;
+  }
+  .play-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(160px, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .play-tree {
+    order: 2;
+    position: sticky;
+    top: 8px;
+    gap: 2px;
+  }
+  .play-tree .stage {
+    max-height: 60vh;
+    max-width: 100%;
+  }
+  .play-main { order: 1; }
+  .word-row-lg {
+    margin: 8px 0 10px;
+    min-height: 52px;
+  }
+  .word-row-lg .slot {
+    width: clamp(24px, 5vw, 34px);
+    height: clamp(40px, 9vw, 52px);
+    font-size: clamp(22px, 5vw, 32px);
+  }
+  .keyboard {
+    gap: 4px;
+  }
+  .key {
+    min-height: 34px;
+    font-size: 13px;
+  }
+  .tabs {
+    bottom: 6px;
+    padding: 4px;
+  }
+  .tab {
+    min-height: 36px;
+    font-size: 12px;
+  }
+  .hint-bar {
+    padding: 8px 12px;
+  }
+  .stage-enter { animation-duration: 0ms; }
+}
+
+/* Orientação retrato puro — garante que árvore e palavra empilham confortavelmente */
+@media (orientation: portrait) {
+  .play-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .play-tree { order: 1; }
+  .play-main { order: 2; }
+}
+
+/* ─────────────────────────────────────────────────────────────
    Word slots — versão LG (destaque maior)
    ───────────────────────────────────────────────────────────── */
 .word-row-lg {
