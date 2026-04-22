@@ -88,6 +88,8 @@ const I18N = {
     material_silver: "prata",
     material_gold: "ouro",
     material_diamond: "diamante",
+    filters_clear: "limpar filtros",
+    filters_empty: "Nenhuma árvore corresponde aos filtros selecionados.",
   },
   en: {
     app_tagline: "learn by cultivating",
@@ -178,6 +180,8 @@ const I18N = {
     material_silver: "silver",
     material_gold: "gold",
     material_diamond: "diamond",
+    filters_clear: "clear filters",
+    filters_empty: "No tree matches the selected filters.",
   }
 };
 

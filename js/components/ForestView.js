@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../store.js';
 import { t } from '../i18n.js';
 import { getSpecies, DEFAULT_SPECIES_ID } from '../data/treeSpecies.js';
-import { RARITY_META, DEFAULT_RARITY } from '../data/rarityTiers.js';
-import { getMaterial } from '../data/materials.js';
+import { RARITY_META, DEFAULT_RARITY, RARITY_TIERS } from '../data/rarityTiers.js';
+import { getMaterial, MATERIALS } from '../data/materials.js';
 import { Topbar } from './Topbar.js';
 
 const h = React.createElement;
@@ -81,7 +81,7 @@ function countBy(list, key) {
   const counts = {};
   for (const item of list) {
     const k = item[key];
-    if (!k) continue;
+    if (k == null) continue;
     counts[k] = (counts[k] || 0) + 1;
   }
   return counts;
@@ -92,14 +92,44 @@ export function ForestView() {
   const L = prefs.uiLang;
   const totalWins = persisted.stats.wins;
 
+  const [filters, setFilters] = useState({ rarity: null, material: null, species: null });
+
   const storedForest = persisted.forest || [];
   const padCount = Math.max(0, totalWins - storedForest.length);
-  const pad = Array.from({ length: padCount }, () => ({ speciesId: DEFAULT_SPECIES_ID, rarity: DEFAULT_RARITY }));
-  const entries = [...pad, ...storedForest].slice(-60);
+  const pad = Array.from({ length: padCount }, () => ({ speciesId: DEFAULT_SPECIES_ID, rarity: DEFAULT_RARITY, material: null }));
+  const allEntries = [...pad, ...storedForest];
 
-  const rarityCounts = countBy(storedForest, "rarity");
-  const materialCounts = countBy(storedForest, "material");
-  const hasRareLoot = Object.keys(rarityCounts).some(r => r !== "common") || Object.keys(materialCounts).length > 0;
+  const rarityCounts = countBy(allEntries, "rarity");
+  const materialCounts = countBy(allEntries, "material");
+  const speciesCounts = countBy(allEntries, "speciesId");
+
+  const rarityChips = RARITY_TIERS.filter(r => rarityCounts[r]);
+  const materialChips = Object.keys(MATERIALS).filter(m => materialCounts[m]);
+  const speciesChips = Object.entries(speciesCounts)
+    .sort((a,b) => b[1] - a[1])
+    .map(([id]) => id);
+
+  const activeFilters = [filters.rarity, filters.material, filters.species].filter(Boolean);
+  const matches = (e) => {
+    if (filters.rarity && (e.rarity || DEFAULT_RARITY) !== filters.rarity) return false;
+    if (filters.material && e.material !== filters.material) return false;
+    if (filters.species && e.speciesId !== filters.species) return false;
+    return true;
+  };
+  const filtered = activeFilters.length ? allEntries.filter(matches) : allEntries;
+  const displayEntries = filtered.slice(-60);
+
+  const toggle = (dim, value) => setFilters(prev => ({ ...prev, [dim]: prev[dim] === value ? null : value }));
+  const clearAll = () => setFilters({ rarity: null, material: null, species: null });
+
+  const chipButton = (key, label, extraClass, active, onClick) =>
+    h("button", {
+      key,
+      className: `rarity-chip ${extraClass}${active ? " chip-active" : ""}`,
+      "aria-pressed": active,
+      type: "button",
+      onClick,
+    }, label);
 
   return h(React.Fragment, null, [
     h(Topbar, { key:"top" }),
@@ -124,24 +154,41 @@ export function ForestView() {
           h("div",{key:"l",className:"stat-lbl"}, t(L,"losses")),
         ]),
       ]),
-      hasRareLoot && h("div",{key:"loot",className:"rarity-legend"},[
-        ...Object.entries(rarityCounts)
-          .filter(([r]) => r !== "common")
-          .map(([r,n]) => h("span",{key:`r-${r}`,className:`rarity-chip rarity-${r}`}, `${t(L, RARITY_META[r].nameKey)} · ${n}`)),
-        ...Object.entries(materialCounts).map(([m,n]) => {
+      (rarityChips.length + materialChips.length) > 0 && h("div",{key:"loot",className:"rarity-legend"}, [
+        ...rarityChips.map(r =>
+          chipButton(`r-${r}`, `${t(L, RARITY_META[r].nameKey)} · ${rarityCounts[r]}`,
+            `rarity-${r}`, filters.rarity === r, () => toggle("rarity", r))
+        ),
+        ...materialChips.map(m => {
           const meta = getMaterial(m);
-          return h("span",{key:`m-${m}`,className:`rarity-chip material-${m}`}, `${t(L, meta.nameKey)} · ${n}`);
+          return chipButton(`m-${m}`, `${t(L, meta.nameKey)} · ${materialCounts[m]}`,
+            `material-${m}`, filters.material === m, () => toggle("material", m));
         }),
       ]),
+      speciesChips.length > 0 && h("div",{key:"spec",className:"rarity-legend species-legend"}, [
+        ...speciesChips.map(s => {
+          const meta = getSpecies(s);
+          return chipButton(`s-${s}`, `${t(L, meta.nameKey)} · ${speciesCounts[s]}`,
+            "species-chip", filters.species === s, () => toggle("species", s));
+        }),
+        activeFilters.length > 0 && h("button",{
+          key:"clear",
+          type:"button",
+          className:"rarity-chip chip-clear",
+          onClick: clearAll,
+        }, t(L, "filters_clear")),
+      ].filter(Boolean)),
     ].filter(Boolean)),
 
     h("div", { key:"grid", className:"card" },
-      entries.length === 0
-        ? h("div",{className:"forest-empty-state"},
-            t(L,"forest_empty").split("\n").map((line,i) =>
-              h(React.Fragment,{key:i},[line,i===0 && h("br",{key:"b"})])))
+      displayEntries.length === 0
+        ? (activeFilters.length > 0
+            ? h("div",{className:"forest-empty-state"}, t(L,"filters_empty"))
+            : h("div",{className:"forest-empty-state"},
+                t(L,"forest_empty").split("\n").map((line,i) =>
+                  h(React.Fragment,{key:i},[line,i===0 && h("br",{key:"b"})]))))
         : h("div", { className:"forest-grid" },
-            entries.map((entry, i) => {
+            displayEntries.map((entry, i) => {
               const meta = getSpecies(entry.speciesId);
               const rarity = entry.rarity || DEFAULT_RARITY;
               const materialMeta = getMaterial(entry.material);
