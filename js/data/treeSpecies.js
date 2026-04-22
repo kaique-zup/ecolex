@@ -14,9 +14,11 @@ export const TREE_SPECIES = {
     },
     shape: "rounded",
   },
-  eucalipto: {
+
+  // ───── easy ─────
+  eucaliptus: {
     difficulty: "easy",
-    nameKey: "species_eucalipto_name",
+    nameKey: "species_eucaliptus_name",
     palette: {
       trunk: "--earth-500",
       leaves: "--moss-500",
@@ -27,9 +29,9 @@ export const TREE_SPECIES = {
     },
     shape: "slim",
   },
-  pinheiro: {
+  pinascius: {
     difficulty: "easy",
-    nameKey: "species_pinheiro_name",
+    nameKey: "species_pinascius_name",
     palette: {
       trunk: "--earth-700",
       leaves: "--moss-700",
@@ -40,9 +42,50 @@ export const TREE_SPECIES = {
     },
     shape: "conic",
   },
-  ipe: {
+  picea_lazuli: {
+    difficulty: "easy",
+    nameKey: "species_picea_lazuli_name",
+    palette: {
+      trunk: "--earth-700",
+      leaves: "--blue-600",
+      leavesMid: "--blue-400",
+      leavesHi: "--blue-200",
+      flowerA: "--blue-200",
+      flowerB: "--moss-100",
+    },
+    shape: "conic",
+  },
+  jaderum: {
+    difficulty: "easy",
+    nameKey: "species_jaderum_name",
+    palette: {
+      trunk: "--earth-500",
+      leaves: "--teal-600",
+      leavesMid: "--teal-400",
+      leavesHi: "--teal-200",
+      flowerA: "--sun-100",
+      flowerB: "--teal-200",
+    },
+    shape: "rounded",
+  },
+  magnolion: {
+    difficulty: "easy",
+    nameKey: "species_magnolion_name",
+    palette: {
+      trunk: "--earth-500",
+      leaves: "--rose-400",
+      leavesMid: "--rose-200",
+      leavesHi: "--rose-100",
+      flowerA: "--rose-600",
+      flowerB: "--rose-200",
+    },
+    shape: "rounded",
+  },
+
+  // ───── medium ─────
+  ipexis_aurora: {
     difficulty: "medium",
-    nameKey: "species_ipe_name",
+    nameKey: "species_ipexis_aurora_name",
     palette: {
       trunk: "--earth-700",
       leaves: "--sun-500",
@@ -53,9 +96,9 @@ export const TREE_SPECIES = {
     },
     shape: "rounded",
   },
-  cedro: {
+  cedronia: {
     difficulty: "medium",
-    nameKey: "species_cedro_name",
+    nameKey: "species_cedronia_name",
     palette: {
       trunk: "--earth-900",
       leaves: "--moss-700",
@@ -66,9 +109,9 @@ export const TREE_SPECIES = {
     },
     shape: "conic",
   },
-  araucaria: {
+  araucantia: {
     difficulty: "medium",
-    nameKey: "species_araucaria_name",
+    nameKey: "species_araucantia_name",
     palette: {
       trunk: "--earth-900",
       leaves: "--moss-900",
@@ -79,9 +122,50 @@ export const TREE_SPECIES = {
     },
     shape: "umbrella",
   },
-  baoba: {
+  jacarandum: {
+    difficulty: "medium",
+    nameKey: "species_jacarandum_name",
+    palette: {
+      trunk: "--earth-700",
+      leaves: "--violet-600",
+      leavesMid: "--violet-400",
+      leavesHi: "--violet-200",
+      flowerA: "--violet-200",
+      flowerB: "--violet-600",
+    },
+    shape: "umbrella",
+  },
+  sakuriel: {
+    difficulty: "medium",
+    nameKey: "species_sakuriel_name",
+    palette: {
+      trunk: "--earth-700",
+      leaves: "--rose-400",
+      leavesMid: "--rose-600",
+      leavesHi: "--rose-200",
+      flowerA: "--rose-600",
+      flowerB: "--rose-100",
+    },
+    shape: "umbrella",
+  },
+  ginkoria: {
+    difficulty: "medium",
+    nameKey: "species_ginkoria_name",
+    palette: {
+      trunk: "--earth-500",
+      leaves: "--sun-500",
+      leavesMid: "--sun-300",
+      leavesHi: "--moss-300",
+      flowerA: "--sun-500",
+      flowerB: "--sun-100",
+    },
+    shape: "slim",
+  },
+
+  // ───── hard ─────
+  baobarum: {
     difficulty: "hard",
-    nameKey: "species_baoba_name",
+    nameKey: "species_baobarum_name",
     palette: {
       trunk: "--terra-700",
       leaves: "--moss-500",
@@ -92,9 +176,9 @@ export const TREE_SPECIES = {
     },
     shape: "stout",
   },
-  sequoia: {
+  sequoitania: {
     difficulty: "hard",
-    nameKey: "species_sequoia_name",
+    nameKey: "species_sequoitania_name",
     palette: {
       trunk: "--terra-700",
       leaves: "--moss-900",
@@ -105,9 +189,9 @@ export const TREE_SPECIES = {
     },
     shape: "tall",
   },
-  jequitiba: {
+  jequitibara: {
     difficulty: "hard",
-    nameKey: "species_jequitiba_name",
+    nameKey: "species_jequitibara_name",
     palette: {
       trunk: "--earth-700",
       leaves: "--moss-700",
@@ -118,9 +202,63 @@ export const TREE_SPECIES = {
     },
     shape: "rounded",
   },
-  dragoeiro: {
+  acer_imperialis: {
+    difficulty: "hard",
+    nameKey: "species_acer_imperialis_name",
+    palette: {
+      trunk: "--earth-900",
+      leaves: "--terra-700",
+      leavesMid: "--terra-500",
+      leavesHi: "--terra-300",
+      flowerA: "--terra-700",
+      flowerB: "--sun-500",
+    },
+    shape: "umbrella",
+  },
+  flamborium: {
+    difficulty: "hard",
+    nameKey: "species_flamborium_name",
+    palette: {
+      trunk: "--earth-700",
+      leaves: "--terra-500",
+      leavesMid: "--sun-500",
+      leavesHi: "--terra-300",
+      flowerA: "--terra-700",
+      flowerB: "--sun-300",
+    },
+    shape: "umbrella",
+  },
+  myrtillum: {
+    difficulty: "hard",
+    nameKey: "species_myrtillum_name",
+    palette: {
+      trunk: "--earth-900",
+      leaves: "--violet-700",
+      leavesMid: "--violet-600",
+      leavesHi: "--violet-400",
+      flowerA: "--violet-200",
+      flowerB: "--violet-700",
+    },
+    shape: "stout",
+  },
+  cupressus_nox: {
+    difficulty: "hard",
+    nameKey: "species_cupressus_nox_name",
+    palette: {
+      trunk: "--ink",
+      leaves: "--moss-900",
+      leavesMid: "--moss-700",
+      leavesHi: "--ink-soft",
+      flowerA: "--violet-400",
+      flowerB: "--moss-900",
+    },
+    shape: "conic",
+  },
+
+  // ───── legendary ─────
+  dracolumina: {
     difficulty: "legendary",
-    nameKey: "species_dragoeiro_name",
+    nameKey: "species_dracolumina_name",
     palette: {
       trunk: "--terra-700",
       leaves: "--moss-700",
@@ -131,9 +269,9 @@ export const TREE_SPECIES = {
     },
     shape: "umbrella",
   },
-  pau_brasil: {
+  paubrasilium: {
     difficulty: "legendary",
-    nameKey: "species_pau_brasil_name",
+    nameKey: "species_paubrasilium_name",
     palette: {
       trunk: "--terra-700",
       leaves: "--terra-500",
