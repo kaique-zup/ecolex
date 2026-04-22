@@ -968,7 +968,31 @@ p { margin: 0; color: var(--fg-soft); line-height: 1.55; }
   letter-spacing: .02em;
   background: rgba(107,126,85,.06);
   color: var(--fg-soft);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
 }
+button.rarity-chip { font: inherit; line-height: 1; }
+.rarity-chip:hover { background: rgba(107,126,85,.14); }
+.rarity-chip:active { transform: scale(.96); }
+.rarity-chip.chip-active {
+  background: var(--moss-700);
+  color: var(--sun-100);
+  border-color: var(--moss-900);
+}
+.rarity-chip.chip-active.rarity-uncommon { background: var(--moss-500); border-color: var(--moss-700); color: var(--sun-100); }
+.rarity-chip.chip-active.rarity-rare     { background: #4c7591; border-color: #2f5370; color: var(--sun-100); }
+.rarity-chip.chip-active.rarity-epic     { background: var(--violet-600); border-color: var(--violet-700); color: var(--sun-100); }
+.rarity-chip.chip-active.rarity-legendary{ background: var(--gold-500); border-color: var(--gold-700); color: var(--ink); }
+.rarity-chip.chip-active.rarity-mythic   { background: var(--terra-500); border-color: var(--terra-700); color: var(--sun-100); }
+.rarity-chip.chip-active.material-bronze { background: var(--bronze-500); border-color: var(--bronze-700); color: var(--sun-100); }
+.rarity-chip.chip-active.material-silver { background: var(--silver-500); border-color: var(--silver-900); color: var(--sun-100); }
+.rarity-chip.chip-active.material-gold   { background: var(--gold-500);  border-color: var(--gold-700);   color: var(--ink); }
+.rarity-chip.chip-active.material-diamond{ background: var(--diamond-500);border-color: var(--diamond-500);color: var(--sun-100); }
+.species-legend { margin-top: 8px; }
+.species-chip { border-color: rgba(107,126,85,.28); color: var(--moss-900); background: rgba(107,126,85,.05); }
+.species-chip.chip-active { background: var(--moss-700); color: var(--sun-100); border-color: var(--moss-900); }
+.chip-clear { background: transparent; border-color: rgba(166,74,43,.35); color: var(--terra-700); font-style: italic; font-weight: 500; }
+.chip-clear:hover { background: rgba(166,74,43,.08); }
 .rarity-uncommon { border-color: rgba(107,126,85,.6); color: var(--moss-900); }
 .rarity-rare     { border-color: rgba(76,117,145,.7);  color: #2f5370; background: rgba(76,117,145,.08); }
 .rarity-epic     { border-color: rgba(109,74,155,.7);  color: var(--violet-700); background: rgba(109,74,155,.08); }
